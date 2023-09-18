@@ -29,6 +29,27 @@ suspend fun box() {
 
 // FIXME(JS_IR): KT-54657
 
+// EXPECTATIONS JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// test.kt:26 box:
+// test.kt:27 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
+// test.kt:20 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$suspendBar\1\27:int=0:int
+// test.kt:15 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$suspendBar\1\27:int=0:int, $this$extensionFun\2:AtomicInt=AtomicInt, $i$f$extensionFun\2\94:int=0:int
+// test.kt:16 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$suspendBar\1\27:int=0:int, $this$extensionFun\2:AtomicInt=AtomicInt, $i$f$extensionFun\2\94:int=0:int
+// test.kt:7 getValue:
+// test.kt:16 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$suspendBar\1\27:int=0:int, $this$extensionFun\2:AtomicInt=AtomicInt, $i$f$extensionFun\2\94:int=0:int
+// test.kt:17 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$suspendBar\1\27:int=0:int, $this$extensionFun\2:AtomicInt=AtomicInt, $i$f$extensionFun\2\94:int=0:int
+// test.kt:21 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$suspendBar\1\27:int=0:int
+// test.kt:22 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$suspendBar\1\27:int=0:int, $i$a$-suspendCoroutineUninterceptedOrReturn-TestKt$suspendBar$2\3\101\1:int=0:int
+
+// EXPECTATIONS ClassicFrontend JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// test.kt:23 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$suspendBar\1\27:int=0:int, $i$a$-suspendCoroutineUninterceptedOrReturn-TestKt$suspendBar$2\3\101\1:int=0:int
+
+// EXPECTATIONS ClassicFrontend FIR JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// test.kt:21 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$suspendBar\1\27:int=0:int
+// test.kt:24 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$suspendBar\1\27:int=0:int
+// test.kt:27 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
+// test.kt:28 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
+
 // EXPECTATIONS JVM_IR
 // test.kt:26 box:
 // test.kt:27 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null

@@ -836,6 +836,16 @@ This option is deprecated and will be deleted in future versions."""
             field = value
         }
 
+    @Argument(
+        value = "-Xuse-inline-scopes-numbers",
+        description = "Use inline scopes numbers for inline marker variables."
+    )
+    var useInlineScopesNumbers: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector, languageVersion)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics
