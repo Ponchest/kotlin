@@ -229,13 +229,30 @@ fun WasmCompiledModuleFragment.generateAsyncJsWrapper(
 
     val jsCodeBodyIndented = jsCodeBody.prependIndent("        ")
 
-    val imports = jsModuleImports
+    val importedModules = jsModuleImports
         .toList()
         .sorted()
-        .joinToString("") {
+        .map {
             val moduleSpecifier = it.toJsStringLiteral()
-            "        $moduleSpecifier: imports[$moduleSpecifier] ?? await import($moduleSpecifier),\n"
+            val importVariableString = JsModuleAndQualifierReference.encode(it)
+            moduleSpecifier to importVariableString
         }
+
+    val importsImportedSection = importedModules
+        .map {
+            buildString {
+                append("import * as ")
+                append(it.second)
+                append(" from ")
+                append(it.first)
+                append(";")
+            }
+        }
+        .joinToString("\n")
+
+    val imports = importedModules.joinToString("") {
+        "        ${it.first}: ${it.second},\n"
+    }
 
     val referencesToImportedDeclarations = jsModuleAndQualifierReferences
         .filter { it.module != null }
@@ -281,8 +298,9 @@ fun WasmCompiledModuleFragment.generateAsyncJsWrapper(
     //language=js
     return """
 $referencesToImportedDeclarations
+$importsImportedSection
 
-export async function instantiate(imports={}, runInitializer=true) {
+export async function instantiate(runInitializer=true) {
     const externrefBoxes = new WeakMap();
     // ref must be non-null
     function tryGetOrSetExternrefBox(ref, ifNotCached) {
