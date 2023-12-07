@@ -16,7 +16,7 @@ fun test() {
 }
 
 // FILE: entry.mjs
-import k from "./index.mjs"
+import { test } from "./index.mjs"
 
-const r = typeof k.test;
+const r = typeof test;
 if (r != "function") throw Error("Wrong result: " + r);

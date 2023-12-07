@@ -76,22 +76,22 @@ fun box(): String = "OK"
 
 // FILE: entry.mjs
 
-import main from "./index.mjs"
+import { makeC, getX, getString, isEven, anyAsEI, eiAsAny } from "./index.mjs"
 
-const c = main.makeC(300);
-if (main.getX(c) !== 300) {
+const c = makeC(300);
+if (getX(c) !== 300) {
     throw "Fail 1";
 }
 
-if (main.getString("2") !== "Test string 2") {
+if (getString("2") !== "Test string 2") {
     throw "Fail 2";
 }
 
-if (main.isEven(31) !== false || main.isEven(10) !== true) {
+if (isEven(31) !== false || isEven(10) !== true) {
     throw "Fail 3";
 }
 
-if (main.anyAsEI(main.eiAsAny({x:10})).x !== 10) {
+if (anyAsEI(eiAsAny({x:10})).x !== 10) {
     throw "Fail 4";
 }
 

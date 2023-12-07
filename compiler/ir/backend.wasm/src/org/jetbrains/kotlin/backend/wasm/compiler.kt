@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.toJsStringLiteral
+import org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
 import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
 import org.jetbrains.kotlin.backend.wasm.export.ExportModelGenerator
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
@@ -218,7 +220,8 @@ const wasmInstance = new WebAssembly.Instance(wasmModule, wasi.getImportObject()
 
 wasi.initialize(wasmInstance);
 
-export default wasmInstance.exports;
+const exports = wasmInstance.exports
+${generateExports()}
 """
 
 fun WasmCompiledModuleFragment.generateAsyncJsWrapper(
@@ -402,9 +405,10 @@ fun WasmCompiledModuleFragment.generateEsmExportsWrapper(
 $importsImportedSection
 import { instantiate } from ${asyncWrapperFileName.toJsStringLiteral()};
 
-export default (await instantiate({
+const exports = (await instantiate({
 $imports
 })).exports;
+${generateExports()}
 """
 }
 
@@ -434,4 +438,38 @@ fun writeCompilationResult(
     if (result.dts != null) {
         File(dir, "$fileNameBase.d.ts").writeText(result.dts)
     }
+}
+
+fun WasmCompiledModuleFragment.generateExports(): String {
+    // TODO: necessary to move export check onto common place
+    val exportNames = exports
+        .filterNot { it.name.startsWith(JsInteropFunctionsLowering.CALL_FUNCTION) }
+        .ifNotEmpty {
+            joinToString(",\n") {
+                "    ${it.name}"
+            }
+        }?.let {
+            """
+            |const {
+                |$it
+            |}
+        """.trimMargin()
+        }
+
+    /*language=js */
+    return """
+export default new Proxy(exports, {
+    _shownError: false,
+    get(target, prop) {
+        if (!this._shownError) {
+            this._shownError = true;
+            if (typeof console !== "undefined") {
+                console.error("Do not use default import. Use corresponding named import instead.")
+            }
+        }
+        return target[prop];
+    }
+});
+${exportNames?.let { "export $it = exports;" }}
+"""
 }

@@ -11,7 +11,7 @@
 fun add(a: Int, b: Int) = a + b
 
 // FILE: entry.mjs
-import k from "./index.mjs"
+import { add } from "./index.mjs"
 
-const r = k.add(2, 3);
+const r = add(2, 3);
 if (r != 5) throw Error("Wrong result: " + r);
