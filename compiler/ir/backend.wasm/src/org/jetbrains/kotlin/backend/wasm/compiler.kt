@@ -176,7 +176,10 @@ fun compileWasm(
             "./$baseFileName.wasm",
             backendContext.jsModuleAndQualifierReferences
         )
-        jsWrapper = generateEsmExportsWrapper("./$baseFileName.uninstantiated.mjs")
+        jsWrapper = compiledWasmModule.generateEsmExportsWrapper(
+            "./$baseFileName.uninstantiated.mjs",
+            backendContext.jsModuleAndQualifierReferences
+        )
     } else {
         jsUninstantiatedWrapper = null
         jsWrapper = compiledWasmModule.generateAsyncWasiWrapper("./$baseFileName.wasm")
@@ -229,78 +232,38 @@ fun WasmCompiledModuleFragment.generateAsyncJsWrapper(
 
     val jsCodeBodyIndented = jsCodeBody.prependIndent("        ")
 
-    val importedModules = jsModuleImports
+    val imports = jsModuleImports
         .toList()
         .sorted()
-        .map {
+        .joinToString("") {
             val moduleSpecifier = it.toJsStringLiteral()
-            val importVariableString = JsModuleAndQualifierReference.encode(it)
-            moduleSpecifier to importVariableString
+            "        $moduleSpecifier: imports[$moduleSpecifier],\n"
         }
 
-    val importsImportedSection = importedModules
+    val referencesToQualifiedAndImportedDeclarations = jsModuleAndQualifierReferences
         .map {
-            buildString {
-                append("import * as ")
-                append(it.second)
-                append(" from ")
-                append(it.first)
-                append(";")
-            }
-        }
-        .joinToString("\n")
-
-    val imports = importedModules.joinToString("") {
-        "        ${it.first}: ${it.second},\n"
-    }
-
-    val referencesToImportedDeclarations = jsModuleAndQualifierReferences
-        .filter { it.module != null }
-        .map {
-            val module = it.module!!
-            buildString {
-                append("import ")
-                append("* as ")
-                if (it.qualifier != null) {
-                    append(it.importVariableName)
-                } else {
-                    append(it.jsVariableName)
-                }
-                append(" from ")
-                append(module.toJsStringLiteral())
-
-                append(";")
-            }
-        }
-        .sorted()
-        .joinToString("\n")
-
-    val referencesToQualifiedDeclarations = jsModuleAndQualifierReferences
-        .map {
+            val module = it.module
             val qualifier = it.qualifier
             buildString {
-                if (qualifier != null) {
-                    append("    const ")
-                    append(it.jsVariableName)
-                    append(" = ")
-                    if (it.module != null) {
-                        append(it.importVariableName)
+                append("    const ")
+                append(it.jsVariableName)
+                append(" = ")
+                if (module != null) {
+                    append("imports[${module.toJsStringLiteral()}]")
+                    if (qualifier != null)
                         append(".")
-                    }
-                    append(qualifier)
-                    append(";")
                 }
+                if (qualifier != null) {
+                    append(qualifier)
+                }
+                append(";")
             }
-        }
-        .sorted()
+        }.sorted()
         .joinToString("\n")
 
     //language=js
     return """
-$referencesToImportedDeclarations
-$importsImportedSection
-
-export async function instantiate(runInitializer=true) {
+export async function instantiate(imports={}, runInitializer=true) {
     const externrefBoxes = new WeakMap();
     // ref must be non-null
     function tryGetOrSetExternrefBox(ref, ifNotCached) {
@@ -311,7 +274,7 @@ export async function instantiate(runInitializer=true) {
         return ifNotCached;
     }
 
-$referencesToQualifiedDeclarations
+$referencesToQualifiedAndImportedDeclarations
     
     const js_code = {
 $jsCodeBodyIndented
@@ -392,10 +355,58 @@ For more information, see https://kotl.in/wasm-help
 """
 }
 
-fun generateEsmExportsWrapper(asyncWrapperFileName: String): String = /*language=js */ """
+fun WasmCompiledModuleFragment.generateEsmExportsWrapper(
+    asyncWrapperFileName: String,
+    jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference>
+): String {
+    val importedModules = jsModuleImports
+        .map {
+            val moduleSpecifier = it.toJsStringLiteral().toString()
+            val importVariableString = JsModuleAndQualifierReference.encode(it)
+            moduleSpecifier to importVariableString
+        }
+
+    val referencesToImportedDeclarations = jsModuleAndQualifierReferences
+        .filter { it.module != null }
+        .map {
+            val module = it.module!!
+            val stringLiteral = module.toJsStringLiteral().toString()
+            stringLiteral to if (it.qualifier != null) {
+                it.importVariableName
+            } else {
+                it.jsVariableName
+            }
+        }
+
+    val allModules = (importedModules + referencesToImportedDeclarations)
+        .distinctBy {
+            it.first
+        }.sortedBy { it.first }
+
+    val importsImportedSection = allModules.joinToString("\n") {
+        buildString {
+            append("import * as ")
+            append(it.second)
+            append(" from ")
+            append(it.first)
+            append(";")
+        }
+    }
+
+    val imports = allModules.joinToString(",\n") {
+        "    ${it.first}: ${it.second}"
+    }
+
+    /*language=js */
+    return """
+$importsImportedSection
 import { instantiate } from ${asyncWrapperFileName.toJsStringLiteral()};
-export default (await instantiate()).exports;
+
+export default (await instantiate({
+$imports
+})).exports;
 """
+}
 
 fun writeCompilationResult(
     result: WasmCompilerResult,
