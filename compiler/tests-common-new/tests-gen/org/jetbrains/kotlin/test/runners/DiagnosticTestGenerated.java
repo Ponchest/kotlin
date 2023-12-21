@@ -34171,6 +34171,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("scriptDeclsShouldVisibleLocally.kts")
+      public void testScriptDeclsShouldVisibleLocally() {
+        runTest("compiler/testData/diagnostics/tests/script/scriptDeclsShouldVisibleLocally.kts");
+      }
+
+      @Test
       @TestMetadata("scriptScopes.kts")
       public void testScriptScopes() {
         runTest("compiler/testData/diagnostics/tests/script/scriptScopes.kts");
