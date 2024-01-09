@@ -58,7 +58,7 @@ class Fir2IrConfiguration private constructor(
                 inlineConstTracker = compilerConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false,
-                useIrFakeOverrideBuilder = compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
+                useIrFakeOverrideBuilder = true,
             )
 
         fun forKlibCompilation(
