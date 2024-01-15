@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils.createEnvironmentWithMockJdkAnd
 import org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.testFramework.IrFirConfigurableTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile
 import org.junit.Assert
@@ -45,7 +46,7 @@ import java.io.File
 import java.io.IOException
 import java.lang.annotation.Retention
 
-abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
+abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir(), IrFirConfigurableTestCase {
 
     @Throws(IOException::class)
     protected fun doTestWithJavac(ktFilePath: String) {
@@ -66,6 +67,9 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
         val javaErrorFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".javaerr.txt"))
 
         val out = File(tmpdir, "out")
+
+        val directives = KotlinTestUtils.parseDirectives(ktFile.readText())
+        if (useFir && directives.contains("IGNORE_FIR")) return
 
         val compiledSuccessfully = if (useJavac) {
             compileKotlinWithJava(
@@ -98,7 +102,9 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir() {
         validateAndCompareDescriptorWithFile(packageView, CONFIGURATION, expectedFile)
     }
 
-    open fun updateConfiguration(configuration: CompilerConfiguration) {}
+    fun updateConfiguration(configuration: CompilerConfiguration) {
+        configureIrFir(configuration)
+    }
 
     @Throws(IOException::class)
     fun compileKotlinWithJava(

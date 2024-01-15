@@ -71,7 +71,7 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
 
         configurationKind = extractConfigurationKind(files)
         val configuration = createConfiguration(
-            configurationKind, getTestJdkKind(files), backend, listOf(getAnnotationsJar()), listOfNotNull(writeJavaFiles(files)), files
+            configurationKind, getTestJdkKind(files), listOf(getAnnotationsJar()), listOfNotNull(writeJavaFiles(files)), files
         )
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         AnalysisHandlerExtension.registerExtension(environment.project, PartialAnalysisHandlerExtension())
