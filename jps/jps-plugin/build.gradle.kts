@@ -41,7 +41,7 @@ dependencies {
     compileOnly(jpsModel())
     compileOnly(jpsBuild())
     compileOnly(jpsModelSerialization())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    compileOnly(intellijJDom())
     testRuntimeOnly(jpsModel())
 
     // testFramework includes too many unnecessary dependencies. Here we manually list all we need to successfully run JPS tests
@@ -69,7 +69,7 @@ dependencies {
     testRuntimeOnly("com.jetbrains.intellij.platform:util-ex:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.jetbrains.intellij.platform:diagnostic:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.google.code.gson:gson:2.8.9")
-    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    testRuntimeOnly(intellijJDom())
     testRuntimeOnly(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core-jvm"))
 
     testImplementation(projectTests(":compiler:incremental-compilation-impl"))
