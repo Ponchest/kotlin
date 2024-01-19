@@ -3834,4 +3834,62 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
             }
         }
     }
+
+    @Nested
+    @TestMetadata("compiler/testData/ir/irText/visibility")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Visibility {
+        @Test
+        public void testAllFilesPresentInVisibility() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/visibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("allPropertiesAndMethodsKJ.kt")
+        public void testAllPropertiesAndMethodsKJ() throws Exception {
+            runTest("compiler/testData/ir/irText/visibility/allPropertiesAndMethodsKJ.kt");
+        }
+
+        @Test
+        @TestMetadata("allPropertiesAndMethodsKJJ.kt")
+        public void testAllPropertiesAndMethodsKJJ() throws Exception {
+            runTest("compiler/testData/ir/irText/visibility/allPropertiesAndMethodsKJJ.kt");
+        }
+
+        @Test
+        @TestMetadata("allPropertiesAndMethodsKJK.kt")
+        public void testAllPropertiesAndMethodsKJK() throws Exception {
+            runTest("compiler/testData/ir/irText/visibility/allPropertiesAndMethodsKJK.kt");
+        }
+
+        @Test
+        @TestMetadata("allPropertiesAndMethodsKJKJ.kt")
+        public void testAllPropertiesAndMethodsKJKJ() throws Exception {
+            runTest("compiler/testData/ir/irText/visibility/allPropertiesAndMethodsKJKJ.kt");
+        }
+
+        @Test
+        @TestMetadata("overrideJavaMethodsKJ.kt")
+        public void testOverrideJavaMethodsKJ() throws Exception {
+            runTest("compiler/testData/ir/irText/visibility/overrideJavaMethodsKJ.kt");
+        }
+
+        @Test
+        @TestMetadata("overrideKotlinMethodsKJKK.kt")
+        public void testOverrideKotlinMethodsKJKK() throws Exception {
+            runTest("compiler/testData/ir/irText/visibility/overrideKotlinMethodsKJKK.kt");
+        }
+
+        @Test
+        @TestMetadata("overridePropertiesKJKK.kt")
+        public void testOverridePropertiesKJKK() throws Exception {
+            runTest("compiler/testData/ir/irText/visibility/overridePropertiesKJKK.kt");
+        }
+
+        @Test
+        @TestMetadata("overrideSetAndGetKJK.kt")
+        public void testOverrideSetAndGetKJK() throws Exception {
+            runTest("compiler/testData/ir/irText/visibility/overrideSetAndGetKJK.kt");
+        }
+    }
 }
