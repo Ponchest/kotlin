@@ -501,4 +501,19 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("json validation")
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+    )
+    @GradleTest
+    fun testJsonBuildMetricsFileValidation(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            buildAndFail(
+                "compileKotlin", "-Pkotlin.build.report.output=JSON",
+            ) {
+                assertOutputContains("Can't configure json report: 'kotlin.build.report.json.directory' property is mandatory")
+            }
+        }
+    }
+
 }

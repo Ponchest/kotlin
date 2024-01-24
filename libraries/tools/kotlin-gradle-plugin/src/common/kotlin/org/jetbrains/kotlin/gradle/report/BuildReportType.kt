@@ -13,6 +13,7 @@ enum class BuildReportType : Serializable {
     BUILD_SCAN,
     SINGLE_FILE,
     TRY_NEXT_CONSOLE,
+    JSON,
     ;
 
     companion object {

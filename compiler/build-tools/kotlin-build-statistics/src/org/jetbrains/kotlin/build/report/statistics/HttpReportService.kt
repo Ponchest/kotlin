@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.build.report.statistics
 import com.google.gson.Gson
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import java.io.IOException
-import java.io.Serializable
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
@@ -18,7 +17,7 @@ class HttpReportService(
     private val url: String,
     private val password: String?,
     private val user: String?,
-) : Serializable {
+) : BuildReportService<Any> {
 
     private var invalidUrl = false
     private var requestPreviousFailed = false
@@ -36,7 +35,7 @@ class HttpReportService(
         }
     }
 
-    fun sendData(data: Any, log: KotlinLogger) {
+    override fun process(data: Any, log: KotlinLogger) {
         val elapsedTime = measureTimeMillis {
             if (invalidUrl) {
                 return

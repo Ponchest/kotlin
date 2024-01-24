@@ -52,6 +52,7 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     BUILD_SCAN_BUILD_REPORT(OR, SAFE),
     HTTP_BUILD_REPORT(OR, SAFE),
     SINGLE_FILE_BUILD_REPORT(OR, SAFE),
+    JSON_BUILD_REPORT(OR, SAFE),
 
     //Dokka features
     ENABLED_DOKKA(OR, SAFE),
