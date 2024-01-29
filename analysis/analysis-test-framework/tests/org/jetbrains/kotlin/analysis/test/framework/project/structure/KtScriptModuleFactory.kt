@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtMod
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import java.nio.file.Path
 
 /**
  * @see org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind.ScriptSource
@@ -18,6 +19,7 @@ object KtScriptModuleFactory : KtModuleFactory {
     override fun createModule(
         testModule: TestModule,
         contextModule: KtModuleWithFiles?,
+        dependencyPaths: Collection<Path>,
         testServices: TestServices,
         project: Project,
     ): KtModuleWithFiles {

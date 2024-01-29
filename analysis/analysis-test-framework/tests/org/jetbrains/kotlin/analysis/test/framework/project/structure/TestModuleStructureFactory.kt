@@ -42,6 +42,31 @@ private typealias LibraryCache = MutableMap<Set<Path>, KtBinaryModule>
 
 private typealias ModulesByName = Map<String, KtModuleWithFiles>
 
+/**
+ * A function to run the topological sort (or post-order sort) for [TestModule]s based on the dependency graph.
+ * This function guarantees:
+ *   - For [TestModule] A and B, where A has dependency on B, A will never appears earlier than B in the result list.
+ */
+private fun sortInDependencyPostOrder(testModules: List<TestModule>): List<TestModule> {
+    val namesToModules = buildMap { testModules.forEach { put(it.name, it) } }
+    val notVisited = testModules.toMutableSet()
+    val sortedModules = mutableListOf<TestModule>()
+
+    fun dfsWalk(module: TestModule) {
+        notVisited.remove(module)
+        for (dependency in module.regularDependencies) {
+            val dependencyAsModule = namesToModules[dependency.moduleName] ?: error("Module ${dependency.moduleName} is missing")
+            if (dependencyAsModule in notVisited) dfsWalk(dependencyAsModule)
+        }
+        sortedModules.add(module)
+    }
+
+    while (notVisited.isNotEmpty()) {
+        dfsWalk(notVisited.first())
+    }
+    return sortedModules
+}
+
 object TestModuleStructureFactory {
     fun createProjectStructureByTestStructure(
         moduleStructure: TestModuleStructure,
@@ -64,25 +89,46 @@ object TestModuleStructureFactory {
         return KtModuleProjectStructure(modules, libraryCache.values)
     }
 
+    /**
+     * A function to create [KtModuleWithFiles] for the given [moduleStructure].
+     *
+     * This function guarantees:
+     *   - For [TestModule] A and B, where A has dependency on B,
+     *     - B will always be created earlier than A.
+     *     - The class path of B will be given to the creation of A's module.
+     *
+     * In particular, it handles unresolved symbol issues caused by building binary libraries.
+     */
     private fun createModules(
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project
     ): List<KtModuleWithFiles> {
         val moduleCount = moduleStructure.modules.size
-        val existingModules = HashMap<String, KtModuleWithFiles>(moduleCount)
         val result = ArrayList<KtModuleWithFiles>(moduleCount)
 
-        for (testModule in moduleStructure.modules) {
+        val processedModules = HashMap<String, KtModuleWithFiles>(moduleCount)
+        val processedDependencies = mutableMapOf<String, Collection<Path>>()
+
+        for (testModule in sortInDependencyPostOrder(moduleStructure.modules)) {
             val contextModuleName = testModule.directives.singleOrZeroValue(AnalysisApiTestDirectives.CONTEXT_MODULE)
-            val contextModule = contextModuleName?.let(existingModules::getValue)
+            val contextModule = contextModuleName?.let(processedModules::getValue)
+
+            val dependencies = testModule.regularDependencies
+                .mapNotNull { processedDependencies[it.moduleName] }
+                .flatten()
 
             val moduleWithFiles = testServices
                 .getKtModuleFactoryForTestModule(testModule)
-                .createModule(testModule, contextModule, testServices, project)
+                .createModule(testModule, contextModule, dependencies, testServices, project)
 
-            existingModules[testModule.name] = moduleWithFiles
+            processedModules[testModule.name] = moduleWithFiles
             result.add(moduleWithFiles)
+
+            val libraryModule = moduleWithFiles.ktModule
+            if (libraryModule is KtLibraryModuleImpl) {
+                processedDependencies[testModule.name] = libraryModule.getBinaryRoots()
+            }
         }
 
         return result
