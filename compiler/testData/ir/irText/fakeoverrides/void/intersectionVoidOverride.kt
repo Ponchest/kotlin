@@ -23,8 +23,7 @@ class D : Java1(), Java2 {
 }
 
 fun test() {
-    val k1: Any = B().foo()
-    val k2: Any = C().foo()
-    val k3: Void = C().foo()
-    val k4: Void = D().foo()
+    val k1: Any = C().foo()
+    val k2: Void = C().foo()
+    val k3: Void = D().foo()
 }

@@ -53,23 +53,24 @@ class D : Java1<Int>(){
     override fun bar(): MutableList<Int> {
         return null!!
     }
-}
-
-class E : Java1<Int>(){
     override fun foo(a: MutableList<Int>) { }
 }
 
-class F : Java1<String?>(){
+class E : Java1<String?>(){
     override fun foo3(c: MutableSet<String?>) { }
-}
-
-class G : Java1<String?>(){
     override fun bar3(): MutableSet<String> {
         return null!!
     }
 }
 
-fun test(a: A, b: B, c: C, d: D, e: E, f: F, g: G){
+class F : Java1<Any>(){
+    override fun bar2(): Queue<Any> {
+        return null!!
+    }
+    override fun foo2(b: Queue<Any>?) { }
+}
+
+fun test(a: A, b: B, c: C, d: D, e: E, f: F) {
     val k: MutableList<Int> = a.a
     val k2: Queue<Int> = a.b
     val k3: MutableSet<Int> = a.c
@@ -110,7 +111,7 @@ fun test(a: A, b: B, c: C, d: D, e: E, f: F, g: G){
     c.foo3(k27)
 
     val k31: MutableList<Int> = d.bar()
-    e.foo(mutableListOf(1))
-    f.foo3(mutableSetOf(null, ""))
-    val k32 : MutableSet<String> = g.bar3()
+    e.foo3(mutableSetOf(null, ""))
+    val k32 : Queue<Any> = f.bar2()
+    f.foo2(LinkedList<Any>())
 }

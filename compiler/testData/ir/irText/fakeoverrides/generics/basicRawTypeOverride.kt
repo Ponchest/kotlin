@@ -19,7 +19,6 @@ class B : Java1() {
     override fun bar(): MutableList<Any> {
         return null!!
     }
-
     override fun foo(a: MutableList<Any?>) { }
 }
 

@@ -12,24 +12,25 @@ public interface Java2 extends KotlinInterface { }
 // FILE: Java3.java
 
 public interface Java3 {
-    public int a = 0;
-    public int foo();
-    public void bar(int o);
+    public Integer a = 0;
+    public Integer foo();
+    public void bar(Integer o);
 }
 
 // FILE: 1.kt
-
 open class A {
     open val a: Int = 1
     open var b: Int = 1
-    open fun foo(): Int { return 0 }
-    open fun bar(o: Int) { }
+    open fun foo(): Int {
+        return 0
+    }
+    open fun bar(o: Int) {}
 }
 
 class B : Java1()  //Kotlin ← Java ← Kotlin
 
 class C : Java1() {     //Kotlin ← Java ← Kotlin with explicit override
-    override fun bar(o: Int) { }
+    override fun bar(o: Int) {}
 
     override fun foo(): Int {
         return 2
@@ -43,31 +44,19 @@ class C : Java1() {     //Kotlin ← Java ← Kotlin with explicit override
         get() = 2
 }
 
-abstract class D : Java1() {    // Kotlin ← Java ← Kotlin with explicit override
-    override fun bar(o: Int) { }
+interface D : Java2     //Kotlin ← Java ← Kotlin ← Java
 
-    override val a: Int
-        get() = 2
-}
-
-interface E : Java2     //Kotlin ← Java ← Kotlin ← Java
-
-class F : Java2 { //Kotlin ← Java ← Kotlin ← Java with explicit override
+class E : Java2 { //Kotlin ← Java ← Kotlin ← Java with explicit override
     override fun foo(): Int {
         return 2
     }
-    override fun bar(o: Int) { }
-}
 
-abstract class G : Java2 { //Kotlin ← Java ← Kotlin ← Java with explicit override
-    override fun foo(): Int {
-        return 2
-    }
+    override fun bar(o: Int) {}
 }
 
 interface KotlinInterface : Java3
 
-fun test(a: A, b: B, c: C, d: D, e: E, f: F, g: G) {
+fun test(a: A, b: B, c: C, d: D, e: E) {
     val k1: Int = a.a
     val k2: Int = a.b
     a.b = 3
@@ -83,15 +72,8 @@ fun test(a: A, b: B, c: C, d: D, e: E, f: F, g: G) {
     c.b = 3
     val k11: Int = c.foo()
     val k12: Unit = c.bar(1)
-    val k13 = d.a
-    val k14 = d.b
-    d.b = 3
-    val k15: Int = d.foo()
-    val k16: Unit = d.bar(1)
-    val k17: Int = e.foo()
-    val k18: Unit = e.bar(1)
-    val k19: Int = f.foo()
-    val k20: Unit = f.bar(1)
-    val k21: Int = g.foo()
-    val k22: Unit = g.bar(1)
+    val k17: Int = d.foo()
+    val k18: Unit = d.bar(1)
+    val k19: Int = e.foo()
+    val k20: Unit = e.bar(1)
 }

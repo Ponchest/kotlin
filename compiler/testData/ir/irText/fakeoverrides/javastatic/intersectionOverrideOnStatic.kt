@@ -13,8 +13,8 @@ public class Java1 {
 // FILE: Java2.java
 public interface Java2 {
     public int a = 2;
-    public void foo(Object t);
-    public Object bar();
+    public void foo(String t);
+    public String bar();
 }
 
 // FILE: 1.kt

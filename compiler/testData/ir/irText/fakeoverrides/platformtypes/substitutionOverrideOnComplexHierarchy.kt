@@ -29,7 +29,7 @@ interface A<T> {
 
 abstract class B : Java1<Int>   //Kotlin ← Java ← Kotlin
 
-class C(override var a: Int?) : Java1<Int> {    //Kotlin ← Java ← Kotlin
+class C(override var a: Int?) : Java1<Int> {    //Kotlin ← Java ← Kotlin with explicit override
     override fun bar(o: Int?) { }
 
     override fun foo(): Int {
@@ -37,42 +37,32 @@ class C(override var a: Int?) : Java1<Int> {    //Kotlin ← Java ← Kotlin
     }
 }
 
-abstract class D(override var a: Int?) : Java1<Int> {   //Kotlin ← Java ← Kotlin
+abstract class D(override var a: Int?) : Java1<Int> {   //Kotlin ← Java ← Kotlin with explicit override (not null type)
     override fun bar(o: Int) { }
 }
 
-class E : Java2<Int> {  // Kotlin ← Java1 ←Java2
+class E : Java2<Int> {  // Kotlin ← Java1 ← Java2 with explicit override
     override fun foo(): Int {
         return 1
     }
     override fun bar(o: Int?) { }
 }
 
-abstract class F : Java2<Int> {  // Kotlin ← Java1 ←Java2
-    override fun foo(): Int {
-        return 1
-    }
-}
+abstract class F : Java2<Int>   // Kotlin ← Java1 ←Java2
 
-abstract class G : Java2<Int>   // Kotlin ← Java1 ←Java2
+abstract class G : Java4<Int>   // Kotlin ← Java ← Kotlin ← Java
 
-abstract class H : Java4<Int>   // Kotlin ← Java ← Kotlin ← Java
-
-class I : Java4<Int> {  // Kotlin ← Java ← Kotlin ← Java
+class H : Java4<Int> {  // Kotlin ← Java ← Kotlin ← Java with explicit override
     override fun foo(): Int {
         return 1
     }
 
-    override fun bar(o: Int?) { }
-}
-
-abstract class J : Java4<Int> { // Kotlin ← Java ← Kotlin ← Java
     override fun bar(o: Int?) { }
 }
 
 interface KotlinInterface<T> : Java3<T>
 
-fun test(b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J) {
+fun test(b: B, c: C, d: D, e: E, f: F, g: G, h: H) {
     var k: Int = b.a
     var k2: Int = b.foo()
     var k3: Unit = b.bar(1)
@@ -84,13 +74,16 @@ fun test(b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J) {
     var k9: Int? = d.a
     var k10: Int = d.foo()
     var k11: Unit = d.bar(1)
+    var k12: Int = e.foo()
+    var k13: Unit = e.bar(1)
+    var k14: Unit = e.bar(null)
+    var k15: Int = f.foo()
+    var k16: Unit = f.bar(1)
+    var k17: Unit = f.bar(null)
+    var k18: Int = g.foo()
+    var k19: Unit = g.bar(1)
+    var k20: Unit = g.bar(null)
     var k21: Int = h.foo()
     var k22: Unit = h.bar(1)
     var k23: Unit = h.bar(null)
-    var k24: Int = i.foo()
-    var k25: Unit = i.bar(1)
-    var k26: Unit = i.bar(null)
-    var k27: Int = j.foo()
-    var k28: Unit = j.bar(1)
-    var k29: Unit = j.bar(null)
 }
