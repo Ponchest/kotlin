@@ -19,55 +19,75 @@ import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.junit.Test
+import java.io.File
 import kotlin.test.fail
 import org.jetbrains.kotlin.konan.file.File as KFile
 
 class MetadataCompatibilityForK2Test {
     @Test
     fun testK2diff() {
+        val coroutinesDir = File("/Users/Dmitriy.Dolovov/Downloads/coroutines")
+        val atomicFuDir = File("/Users/Dmitriy.Dolovov/Downloads/atomicfu")
+
+        // IMPORTANT: Preserve order of libraries in `k1Libraries` and `k2Libraries`!
+        @Suppress("TestFailedLine", "RedundantSuppression")
         assertLibrariesAreEqual(
-            k1LibraryPath = "/Users/Dmitriy.Dolovov/Downloads/coroutines/k1-kotlinx-coroutines-core.klib",
-            k2LibraryPath = "/Users/Dmitriy.Dolovov/Downloads/coroutines/k2-kotlinx-coroutines-core.klib",
+            k1LibraryFiles = listOf(
+                coroutinesDir.resolve("k1-kotlinx-coroutines-core.klib"),
+                coroutinesDir.resolve("k1-kotlinx-coroutines-test.klib"),
+                atomicFuDir.resolve("k1-atomicfu.klib"),
+            ),
+            k2LibraryFiles = listOf(
+                coroutinesDir.resolve("k2-kotlinx-coroutines-core.klib"),
+                coroutinesDir.resolve("k2-kotlinx-coroutines-test.klib"),
+                atomicFuDir.resolve("k2-atomicfu.klib"),
+            ),
         )
     }
 }
 
 @Suppress("SameParameterValue")
 private fun assertLibrariesAreEqual(
-    k1LibraryPath: String,
-    k2LibraryPath: String,
+    k1LibraryFiles: List<File>,
+    k2LibraryFiles: List<File>,
 ) {
-    val k1Module = loadKlibModuleMetadata(k1LibraryPath)
-    val k2Module = loadKlibModuleMetadata(k2LibraryPath)
+    val k1LibraryPaths = k1LibraryFiles.map { it.canonicalPath }
+    val k2LibraryPaths = k2LibraryFiles.map { it.canonicalPath }
 
-    val mismatchesFilter = MismatchesFilter(
-        k1Resolver = Resolver(k1Module),
-        k2Resolver = Resolver(k2Module)
-    )
+    check(k1LibraryPaths.size == k2LibraryPaths.size)
+    check(k1LibraryPaths.size == k1LibraryPaths.toSet().size)
+    check(k2LibraryPaths.size == k2LibraryPaths.toSet().size)
+    check((k1LibraryPaths intersect k2LibraryPaths.toSet()).isEmpty())
 
-    when (val result = MetadataDeclarationsComparator.compare(k1Module, k2Module)) {
-        is Result.Success -> Unit
-        is Result.Failure -> {
-            val mismatches = result.mismatches
-                .sortedBy { it::class.java.simpleName + "_" + it.kind }
-                .filter(mismatchesFilter)
+    val k1Modules = loadKlibModulesMetadata(k1LibraryPaths)
+    val k2Modules = loadKlibModulesMetadata(k2LibraryPaths)
 
-            if (mismatches.isEmpty()) return
+    val results = (k1Modules zip k2Modules).map { (k1Module, k2Module) ->
+        MetadataDeclarationsComparator.compare(k1Module, k2Module)
+    }
 
-            val failureMessage = buildString {
-                appendLine("${mismatches.size} mismatches found while comparing K1 (A) module with K2 (B) module:")
-                mismatches.forEachIndexed { index, mismatch -> appendLine("${(index + 1)}.\n$mismatch") }
-            }
-
-            fail(failureMessage)
+    val mismatches = results.flatMap { result ->
+        when (result) {
+            is Result.Success -> emptyList()
+            is Result.Failure -> result.mismatches
         }
+    }.sortedBy { it::class.java.simpleName + "_" + it.kind }
+
+    val unexpectedMismatches = MismatchesFilter(k1Resolver = Resolver(k1Modules), k2Resolver = Resolver(k2Modules)).filter(mismatches)
+    if (unexpectedMismatches.isNotEmpty()) {
+        val failureMessage = buildString {
+            appendLine("${unexpectedMismatches.size} mismatches found while comparing K1 (A) module with K2 (B) module:")
+            unexpectedMismatches.forEachIndexed { index, mismatch -> appendLine("${(index + 1)}.\n$mismatch") }
+        }
+
+        fail(failureMessage)
     }
 }
 
-private fun loadKlibModuleMetadata(libraryPath: String): KlibModuleMetadata {
+private fun loadKlibModulesMetadata(libraryPaths: List<String>): List<KlibModuleMetadata> = libraryPaths.map { libraryPath ->
     val library = resolveSingleFileKlib(KFile(libraryPath))
     val metadata = loadBinaryMetadata(library)
-    return KlibModuleMetadata.read(SerializedMetadataLibraryProvider(metadata))
+    KlibModuleMetadata.read(SerializedMetadataLibraryProvider(metadata))
 }
 
 private fun loadBinaryMetadata(library: KotlinLibrary): SerializedMetadata {
@@ -85,24 +105,26 @@ private fun loadBinaryMetadata(library: KotlinLibrary): SerializedMetadata {
     )
 }
 
-private class Resolver(module: KlibModuleMetadata) {
+private class Resolver(modules: Collection<KlibModuleMetadata>) {
     private val packageFqNames = hashSetOf<String>()
     private val typeAliases = hashMapOf<String, KmTypeAlias>()
     private val classes = hashMapOf<String, KmClass>()
 
     init {
-        module.fragments.forEach { fragment ->
-            fragment.classes.forEach { clazz ->
-                classes[clazz.name] = clazz
-            }
+        modules.forEach { module ->
+            module.fragments.forEach fragment@{ fragment ->
+                fragment.classes.forEach { clazz ->
+                    classes[clazz.name] = clazz
+                }
 
-            val pkg = fragment.pkg ?: return@forEach
-            val packageFqName = pkg.fqName?.replace('.', '/') ?: return@forEach
-            packageFqNames += packageFqName
+                val pkg = fragment.pkg ?: return@fragment
+                val packageFqName = pkg.fqName?.replace('.', '/') ?: return@fragment
+                packageFqNames += packageFqName
 
-            pkg.typeAliases.forEach { typeAlias ->
-                val typeAliasFqName = if (packageFqName.isNotEmpty()) packageFqName + "/" + typeAlias.name else typeAlias.name
-                typeAliases[typeAliasFqName] = typeAlias
+                pkg.typeAliases.forEach { typeAlias ->
+                    val typeAliasFqName = if (packageFqName.isNotEmpty()) packageFqName + "/" + typeAlias.name else typeAlias.name
+                    typeAliases[typeAliasFqName] = typeAlias
+                }
             }
         }
     }
@@ -127,28 +149,38 @@ private class Resolver(module: KlibModuleMetadata) {
 private class MismatchesFilter(
     private val k1Resolver: Resolver,
     private val k2Resolver: Resolver,
-) : (Mismatch) -> Boolean {
-    override fun invoke(mismatch: Mismatch): Boolean {
-        if (mismatch.isMismatchThatIsOK())
-            return false
+) {
+    fun filter(input: List<Mismatch>): List<Mismatch> {
+        return input
+            /* --- FILTER OUT: MISMATCHES THAT ARE OK --- */
+            .filter {
+                when {
+                    it.isMissingEnumEntryInK2() -> false
+                    it.isShortCircuitedTypeRecordedInK2TypeAliasUnderlyingType() -> false
+                    it.isMoreExpandedTypeRecordedInK2TypeAliasUnderlyingType() -> false
+                    it.isTypeAliasRecordedInK1BothAsClassAndTypeAlias() -> false
+                    it.isValueParameterWithNonPropagatedDeclaresDefaultValueFlagInK1() -> false
+                    /* no more reproduced */ //it.isHasAnnotationsFlagHasDifferentStateInK1AndK2() -> false
+                    it.isMissingAnnotationOnNonVisibleDeclaration() -> false
+                    /* see KT-65383 */ it.isFalsePositiveIsOperatorFlagOnInvokeFunctionInK1() -> false
+                    else -> true
+                }
+            }
+            .dropPairedMissingFunctionMismatchesDueToMissingNullableKotlinAnyUpperBound()
 
-        if (mismatch.isMismatchThatIsNotOK())
-            return false // We know about them. But let's skip them all to make sure there is nothing new.
-
-        return true
+            /* --- FILTER OUT: MISMATCHES THAT ARE NOT OK --- */
+            /* We know about them. But let's skip them all to make sure there is nothing new. */
+            .filter {
+                when {
+                    /* already fixed in KT-64743 */ //it.isTypeAliasRecordedInK2TypeAsClass() -> false
+                    /* TODO: KT-65263 (scheduled to 2.0.0-RC) */ it.isAbbreviatedTypeMissingInK1OrK2Type() -> false
+                    /* TODO: KT-63871 (scheduled to 2.1.0) */ it.isNotDefaultPropertyNotMarkedAsNotDefaultInK2() -> false
+                    else -> true
+                }
+            }
     }
 
     /* --- MISMATCHES THAT ARE OK --- */
-
-    private fun Mismatch.isMismatchThatIsOK(): Boolean =
-        isMissingEnumEntryInK2()
-                || isShortCircuitedTypeRecordedInK2TypeAliasUnderlyingType()
-                || isMoreExpandedTypeRecordedInK2TypeAliasUnderlyingType()
-                || isAbbreviatedTypeMissingInK1OrK2Type()
-                || isTypeAliasRecordedInK1BothAsClassAndTypeAlias()
-                || isValueParameterWithNonPropagatedDeclaresDefaultValueFlagInK1()
-                || isHasAnnotationsFlagHasDifferentStateInK1AndK2()
-                || isMissingAnnotationOnNonVisibleDeclaration()
 
     // enum entry classes are not serialized in K2
     private fun Mismatch.isMissingEnumEntryInK2(): Boolean =
@@ -217,34 +249,6 @@ private class MismatchesFilter(
         return false
     }
 
-    // That's OK. Abbreviated type may be absent at all. No harm at all.
-    private fun Mismatch.isAbbreviatedTypeMissingInK1OrK2Type(): Boolean {
-        if (this is Mismatch.MissingEntity && kind == TypeKind.ABBREVIATED) {
-            val lastPathElement = path.last()
-
-            if (lastPathElement is PathElement.Type && !isRelatedToTypeAliasUnderlyingType()) {
-                val typeK1 = lastPathElement.typeA
-                val typeK2 = lastPathElement.typeB
-
-                val typeK1Class = typeK1.classifier as? KmClassifier.Class
-                val typeK1HasAbbreviation = typeK1.abbreviatedType != null
-
-                val typeK2Class = typeK2.classifier as? KmClassifier.Class
-                val typeK2HasAbbreviation = typeK2.abbreviatedType != null
-
-                if (typeK1Class != null
-                    && typeK2Class != null
-                    && typeK1Class.name == typeK2Class.name
-                    && typeK1HasAbbreviation != typeK2HasAbbreviation
-                ) {
-                    return true
-                }
-            }
-        }
-
-        return false
-    }
-
     // This is OK since in K2 it works correctly.
     private fun Mismatch.isTypeAliasRecordedInK1BothAsClassAndTypeAlias(): Boolean {
         if (this is Mismatch.MissingEntity && kind == EntityKind.Class && missingInB) {
@@ -283,6 +287,7 @@ private class MismatchesFilter(
 
     // This issue itself is not a problem. The real problem is that some annotations are missing,
     // and this is addressed by another check in 'MISMATCHES THAT ARE NOT OK' section.
+    @Suppress("unused")
     private fun Mismatch.isHasAnnotationsFlagHasDifferentStateInK1AndK2(): Boolean {
         if (this is Mismatch.DifferentValues && kind is FlagKind && name == "hasAnnotations") {
             val hasAnnotationsInK1 = valueA as Boolean
@@ -318,7 +323,7 @@ private class MismatchesFilter(
         }
 
         if (this is Mismatch.MissingEntity && kind is AnnotationKind) {
-            // If entity is invisible outside of the module or the annotation is invisible outside the module,
+            // If entity is invisible outside the module or the annotation is invisible outside the module,
             // treat this as a non-error situation.
             if (isDefinitelyUnderNonVisibleDeclarationInK2())
                 return true
@@ -335,13 +340,62 @@ private class MismatchesFilter(
         return false
     }
 
+    private fun List<Mismatch>.dropPairedMissingFunctionMismatchesDueToMissingNullableKotlinAnyUpperBound(): List<Mismatch> {
+        fun groupingKey(mismatch: Mismatch, presentOnlyInK1: Boolean): String? {
+            if (mismatch !is Mismatch.MissingEntity || mismatch.kind != EntityKind.Function || presentOnlyInK1 == mismatch.missingInA) return null
+
+            val functionKey = mismatch.toString().substringBefore(" is missing in ", missingDelimiterValue = "")
+            if (functionKey.isEmpty()) return null
+
+            return mismatch.path.filter { it !is PathElement.Root }.joinToString(" -> ", postfix = " -> $functionKey")
+        }
+
+        val functionsPresentOnlyInK1: Map<String, Mismatch> = mapNotNull { mismatch ->
+            val key = groupingKey(mismatch, presentOnlyInK1 = true) ?: return@mapNotNull null
+            key to mismatch
+        }.toMap()
+
+        val functionsPresentOnlyInK2: Map<String, Mismatch> = mapNotNull { mismatch ->
+            val key = groupingKey(mismatch, presentOnlyInK1 = false) ?: return@mapNotNull null
+            key to mismatch
+        }.toMap()
+
+        val functionsKeysInK2WithoutNullableAnyUppedBound = functionsPresentOnlyInK2.keys.associateWith { key ->
+            key.replace(": kotlin/Any?,", ",").replace(": kotlin/Any?>", ">")
+        }
+
+        val mismatchesToRemove = hashSetOf<Mismatch>()
+        functionsKeysInK2WithoutNullableAnyUppedBound.forEach { (keyForK2, keyForK1) ->
+            val functionInK1 = functionsPresentOnlyInK1[keyForK1] ?: return@forEach
+            val functionInK2 = functionsPresentOnlyInK2.getValue(keyForK2)
+
+            // self annihilation:
+            mismatchesToRemove += functionInK1
+            mismatchesToRemove += functionInK2
+        }
+
+        return this - mismatchesToRemove
+    }
+
+    // 'isOperator' flag is not set for certain functions.
+    private fun Mismatch.isFalsePositiveIsOperatorFlagOnInvokeFunctionInK1(): Boolean {
+        if (this is Mismatch.DifferentValues && kind is FlagKind && name == "isOperator") {
+            val lastPathElement = path.last() as? PathElement.Function
+            if (lastPathElement?.functionA?.name == "invoke") {
+                val isOperatorInK1 = valueA as Boolean
+                val isOperatorInK2 = valueB as Boolean
+
+                if (isOperatorInK1 && !isOperatorInK2)
+                    return true
+            }
+        }
+
+        return false
+    }
+
     /* --- MISMATCHES THAT ARE NOT OK --- */
 
-    private fun Mismatch.isMismatchThatIsNotOK(): Boolean =
-        isTypeAliasRecordedInK2TypeAsClass()
-                || isInvokeFunctionWithoutOperatorFlagInK2()
-                || isNotDefaultPropertyNotMarkedAsNotDefaultInK2()
-
+    @Suppress("unused")
     private fun Mismatch.isTypeAliasRecordedInK2TypeAsClass(): Boolean {
         if (this is Mismatch.DifferentValues && kind == EntityKind.Classifier) {
             val lastPathElement = path.last()
@@ -383,7 +437,7 @@ private class MismatchesFilter(
                 }
             } else {
                 // Some function is missing in K2. Probably, that's because one of the function's
-                // value parameters has properly recorded TA in it's type.
+                // value parameters has properly recorded TA in its type.
                 val functionInK1 = existentValue as KmFunction
                 functionInK1.allTypes().forEach { type ->
                     val classFqName = (type.classifier as? KmClassifier.Class)?.name ?: return@forEach
@@ -398,7 +452,6 @@ private class MismatchesFilter(
     }
 
     // Invalid type: type alias is recorded as KmClassifier.Class in metadata!
-    // TODO: fix type serialization in FIR
     private fun isTypeAliasRecordedInK2TypeAsClass(typeK1: KmType, typeK2: KmType): Boolean {
         val typeK1Class = typeK1.classifier as? KmClassifier.Class
         val typeK1Abbreviation = typeK1.abbreviatedType?.classifier as? KmClassifier.TypeAlias
@@ -406,6 +459,7 @@ private class MismatchesFilter(
         val typeK2Class = typeK2.classifier as? KmClassifier.Class
         val typeK2HasAbbreviation = typeK2.abbreviatedType != null
 
+        @Suppress("RedundantIf", "RedundantSuppression")
         if (typeK1Class != null
             && typeK1Abbreviation != null
             && typeK2Class != null
@@ -419,17 +473,28 @@ private class MismatchesFilter(
         return false
     }
 
-    // 'isOperator' flag is not set for certain functions.
-    // TODO: fix type serialization in FIR
-    private fun Mismatch.isInvokeFunctionWithoutOperatorFlagInK2(): Boolean {
-        if (this is Mismatch.DifferentValues && kind is FlagKind && name == "isOperator") {
-            val lastPathElement = path.last() as? PathElement.Function
-            if (lastPathElement?.functionA?.name == "invoke") {
-                val isOperatorInK1 = valueA as Boolean
-                val isOperatorInK2 = valueB as Boolean
+    // Abbreviated type may be absent at all. No harm at all.
+    private fun Mismatch.isAbbreviatedTypeMissingInK1OrK2Type(): Boolean {
+        if (this is Mismatch.MissingEntity && kind == TypeKind.ABBREVIATED) {
+            val lastPathElement = path.last()
 
-                if (isOperatorInK1 && !isOperatorInK2)
+            if (lastPathElement is PathElement.Type && !isRelatedToTypeAliasUnderlyingType()) {
+                val typeK1 = lastPathElement.typeA
+                val typeK2 = lastPathElement.typeB
+
+                val typeK1Class = typeK1.classifier as? KmClassifier.Class
+                val typeK1HasAbbreviation = typeK1.abbreviatedType != null
+
+                val typeK2Class = typeK2.classifier as? KmClassifier.Class
+                val typeK2HasAbbreviation = typeK2.abbreviatedType != null
+
+                if (typeK1Class != null
+                    && typeK2Class != null
+                    && typeK1Class.name == typeK2Class.name
+                    && typeK1HasAbbreviation != typeK2HasAbbreviation
+                ) {
                     return true
+                }
             }
         }
 
@@ -437,7 +502,6 @@ private class MismatchesFilter(
     }
 
     // 'isNotDefault' flag is not set for certain properties.
-    // TODO: fix type serialization in FIR
     private fun Mismatch.isNotDefaultPropertyNotMarkedAsNotDefaultInK2(): Boolean {
         if (this is Mismatch.DifferentValues
             && kind is FlagKind
