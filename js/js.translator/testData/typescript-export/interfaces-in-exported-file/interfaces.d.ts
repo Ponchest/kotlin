@@ -19,6 +19,15 @@ declare namespace JS_TESTS {
                 readonly "foo.AnotherExportedInterface": unique symbol;
             };
         }
+        interface WithTheCompanion {
+            readonly interfaceField: string;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.WithTheCompanion": unique symbol;
+            };
+        }
+        const WithTheCompanion: {
+            companionFunction(): string;
+        };
         class TestInterfaceImpl implements foo.TestInterface {
             constructor(value: string);
             get value(): string;

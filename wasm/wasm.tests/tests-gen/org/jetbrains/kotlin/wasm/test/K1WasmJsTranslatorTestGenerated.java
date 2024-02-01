@@ -329,6 +329,12 @@ public class K1WasmJsTranslatorTestGenerated extends AbstractK1WasmJsTranslatorT
             }
 
             @Test
+            @TestMetadata("interfacesWithCompanion.kt")
+            public void testInterfacesWithCompanion() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/interfacesWithCompanion.kt");
+            }
+
+            @Test
             @TestMetadata("topLevelVarargFun.kt")
             public void testTopLevelVarargFun() throws Exception {
                 runTest("js/js.translator/testData/box/esModules/jsModule/topLevelVarargFun.kt");
@@ -499,6 +505,12 @@ public class K1WasmJsTranslatorTestGenerated extends AbstractK1WasmJsTranslatorT
         @TestMetadata("interfaces.kt")
         public void testInterfaces() throws Exception {
             runTest("js/js.translator/testData/box/jsQualifier/interfaces.kt");
+        }
+
+        @Test
+        @TestMetadata("interfacesWithCompanion.kt")
+        public void testInterfacesWithCompanion() throws Exception {
+            runTest("js/js.translator/testData/box/jsQualifier/interfacesWithCompanion.kt");
         }
 
         @Test

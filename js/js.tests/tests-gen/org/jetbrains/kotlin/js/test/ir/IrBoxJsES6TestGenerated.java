@@ -2606,6 +2606,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
             }
 
             @Test
+            @TestMetadata("interfaceWithCompanion.kt")
+            public void testInterfaceWithCompanion() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsExport/interfaceWithCompanion.kt");
+            }
+
+            @Test
             @TestMetadata("jsExportInClass.kt")
             public void testJsExportInClass() throws Exception {
                 runTest("js/js.translator/testData/box/esModules/jsExport/jsExportInClass.kt");
@@ -2697,6 +2703,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
             @TestMetadata("interfaces.kt")
             public void testInterfaces() throws Exception {
                 runTest("js/js.translator/testData/box/esModules/jsModule/interfaces.kt");
+            }
+
+            @Test
+            @TestMetadata("interfacesWithCompanion.kt")
+            public void testInterfacesWithCompanion() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/interfacesWithCompanion.kt");
             }
 
             @Test
@@ -7519,6 +7531,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         }
 
         @Test
+        @TestMetadata("interfaceWithCompanion.kt")
+        public void testInterfaceWithCompanion() throws Exception {
+            runTest("js/js.translator/testData/box/jsExport/interfaceWithCompanion.kt");
+        }
+
+        @Test
         @TestMetadata("jsExportInClass.kt")
         public void testJsExportInClass() throws Exception {
             runTest("js/js.translator/testData/box/jsExport/jsExportInClass.kt");
@@ -7652,6 +7670,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         @TestMetadata("interfaces.kt")
         public void testInterfaces() throws Exception {
             runTest("js/js.translator/testData/box/jsModule/interfaces.kt");
+        }
+
+        @Test
+        @TestMetadata("interfacesWithCompanion.kt")
+        public void testInterfacesWithCompanion() throws Exception {
+            runTest("js/js.translator/testData/box/jsModule/interfacesWithCompanion.kt");
         }
 
         @Test
@@ -7828,6 +7852,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         @TestMetadata("interfaces.kt")
         public void testInterfaces() throws Exception {
             runTest("js/js.translator/testData/box/jsQualifier/interfaces.kt");
+        }
+
+        @Test
+        @TestMetadata("interfacesWithCompanion.kt")
+        public void testInterfacesWithCompanion() throws Exception {
+            runTest("js/js.translator/testData/box/jsQualifier/interfacesWithCompanion.kt");
         }
 
         @Test
