@@ -28,6 +28,7 @@ class MetadataCompatibilityForK2Test {
     fun testK2diff() {
         val coroutinesDir = File("/Users/Dmitriy.Dolovov/Downloads/coroutines")
         val atomicFuDir = File("/Users/Dmitriy.Dolovov/Downloads/atomicfu")
+        val serializationDir = File("/Users/Dmitriy.Dolovov/Downloads/serialization")
 
         // IMPORTANT: Preserve order of libraries in `k1Libraries` and `k2Libraries`!
         @Suppress("TestFailedLine", "RedundantSuppression")
@@ -36,11 +37,13 @@ class MetadataCompatibilityForK2Test {
                 coroutinesDir.resolve("k1-kotlinx-coroutines-core.klib"),
                 coroutinesDir.resolve("k1-kotlinx-coroutines-test.klib"),
                 atomicFuDir.resolve("k1-atomicfu.klib"),
+                serializationDir.resolve("k1-kotlinx-serialization-core.klib"),
             ),
             k2LibraryFiles = listOf(
                 coroutinesDir.resolve("k2-kotlinx-coroutines-core.klib"),
                 coroutinesDir.resolve("k2-kotlinx-coroutines-test.klib"),
                 atomicFuDir.resolve("k2-atomicfu.klib"),
+                serializationDir.resolve("k2-kotlinx-serialization-core.klib"),
             ),
         )
     }
@@ -163,6 +166,9 @@ private class MismatchesFilter(
                     /* no more reproduced */ //it.isHasAnnotationsFlagHasDifferentStateInK1AndK2() -> false
                     it.isMissingAnnotationOnNonVisibleDeclaration() -> false
                     /* see KT-65383 */ it.isFalsePositiveIsOperatorFlagOnInvokeFunctionInK1() -> false
+                    it.isNullableKotlinAnyUpperBoundInClassTypeParameterMissing() -> false
+                    /* see KT-61138 */ it.isIgnoredHasConstantFlag() -> false
+                    it.isCompileTimeValueForConstantMissingInK1() -> false
                     else -> true
                 }
             }
@@ -340,6 +346,40 @@ private class MismatchesFilter(
         return false
     }
 
+    private fun Mismatch.isNullableKotlinAnyUpperBoundInClassTypeParameterMissing(): Boolean {
+        if (this is Mismatch.MissingEntity && kind == TypeKind.UPPER_BOUND) {
+            val missingUpperBound = existentValue as KmType
+            if ((missingUpperBound.classifier as? KmClassifier.Class)?.name == "kotlin/Any"
+                && missingUpperBound.arguments.isEmpty()
+                && missingUpperBound.isNullable
+                && !missingUpperBound.isDefinitelyNonNull
+                && missingUpperBound.abbreviatedType == null
+                && missingUpperBound.flexibleTypeUpperBound == null
+                && missingUpperBound.outerType == null
+            ) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    private fun Mismatch.isIgnoredHasConstantFlag(): Boolean {
+        return this is Mismatch.DifferentValues && kind is FlagKind && name == "hasConstant"
+    }
+
+    private fun Mismatch.isCompileTimeValueForConstantMissingInK1(): Boolean {
+        if (this is Mismatch.MissingEntity && kind == EntityKind.CompileTimeValue && missingInA) {
+            val compileTimeValue = existentValue as KmAnnotationArgument
+            if (compileTimeValue is KmAnnotationArgument.ArrayValue && compileTimeValue.elements.isEmpty()) {
+                // Some strange case when empty arrays were not considered as compile time values.
+                return true
+            }
+        }
+
+        return false
+    }
+
     private fun List<Mismatch>.dropPairedMissingFunctionMismatchesDueToMissingNullableKotlinAnyUpperBound(): List<Mismatch> {
         fun groupingKey(mismatch: Mismatch, presentOnlyInK1: Boolean): String? {
             if (mismatch !is Mismatch.MissingEntity || mismatch.kind != EntityKind.Function || presentOnlyInK1 == mismatch.missingInA) return null
@@ -510,12 +550,17 @@ private class MismatchesFilter(
             val lastPathElement = path.last() as? PathElement.Property
             if (lastPathElement != null) {
                 val propertyInK2 = lastPathElement.propertyB
-                val isReallyNotDefault = propertyInK2.hasAnnotations || propertyInK2.isDelegated
+
+                // This is not a 100% correct check for non-defaultness, but a good approximation:
+                // If a property has `kind == DELEGATION` then it is a fake override of a property declared in an interface
+                // that appeared in the current class through interface delegation. Such property in interface could only have
+                // accessor body (never a backing field).
+                val isReallyNotDefaultBecauseOfInterfaceDelegation = propertyInK2.kind == MemberKind.DELEGATION
 
                 val isNotDefaultInK1 = valueA as Boolean
                 val isNotDefaultInK2 = valueB as Boolean
 
-                if (isNotDefaultInK1 && !isNotDefaultInK2 && isReallyNotDefault)
+                if (isNotDefaultInK1 && !isNotDefaultInK2 && isReallyNotDefaultBecauseOfInterfaceDelegation)
                     return true
             }
         }
