@@ -281,7 +281,7 @@ class ExportModelToTsDeclarations {
 
     private fun ExportedRegularClass.generateTypeScriptString(indent: String, prefix: String, esModules: Boolean): String {
         val keyword = if (isInterface) "interface" else "class"
-        val allNestedClasses = if (!isInterface) this.nestedClasses else emptyList()
+        val (interfaceCompanions, allNestedClasses) = nestedClasses.partition { isInterface && it.ir.isCompanion }
         val superInterfacesKeyword = if (isInterface) "extends" else "implements"
 
         val superClassClause = superClasses.toExtendsClause(indent)
@@ -329,17 +329,15 @@ class ExportModelToTsDeclarations {
         val staticsExport =
             if (realNestedClasses.isNotEmpty()) "\n" + ExportedNamespace(name, realNestedClasses).toTypeScript(indent, prefix) else ""
 
-        val interfaceNestedClasses = runIf(isInterface && nestedClasses.isNotEmpty()) {
-            "\n" + nestedClasses.joinToString("\n") {
-                it.toTypeScript(
-                    indent,
-                    prefix,
-                    esModules
-                )
-            }
-        }.orEmpty()
+        val interfaceCompanionsString = if (interfaceCompanions.isNotEmpty()) "\n" + interfaceCompanions.joinToString("\n") {
+            it.toTypeScript(
+                indent,
+                prefix,
+                esModules
+            )
+        } else ""
 
-        return if (name.isValidES5Identifier()) tsIgnoreForPrivateConstructorInheritance + klassExport + staticsExport + interfaceNestedClasses else ""
+        return if (name.isValidES5Identifier()) tsIgnoreForPrivateConstructorInheritance + klassExport + staticsExport + interfaceCompanionsString else ""
     }
 
     private fun ExportedRegularClass.hasSuperClassWithPrivateConstructor(): Boolean {

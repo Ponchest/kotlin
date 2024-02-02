@@ -44,7 +44,7 @@ external interface OptionalFieldsInterface {
 
 
 interface WithTheCompanion {
-    val interfaceField: String = "FIELD"
+    val interfaceField: String
 
     companion object {
         fun companionFunction(): String = "FUNCTION"

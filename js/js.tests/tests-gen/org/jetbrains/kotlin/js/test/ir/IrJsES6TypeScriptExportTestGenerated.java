@@ -442,16 +442,6 @@ public class IrJsES6TypeScriptExportTestGenerated extends AbstractIrJsES6TypeScr
     }
 
     @Nested
-    @TestMetadata("js/js.translator/testData/typescript-export/js-static")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Js_static {
-        @Test
-        public void testAllFilesPresentInJs_static() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js-static"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
-        }
-    }
-
-    @Nested
     @TestMetadata("js/js.translator/testData/typescript-export/member-properties")
     @TestDataPath("$PROJECT_ROOT")
     public class Member_properties {
