@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // EXPECTED_REACHABLE_NODES: 1238
 // MODULE_KIND: AMD
 // FILE: bar.kt
@@ -13,6 +14,9 @@ external interface Bar {
 // FILE: test.kt
 import bar.Bar
 
+inline fun Bar.Companion.test() = "CHECK"
+
 fun box(): String {
+    Bar.test()
     return Bar.ok()
 }

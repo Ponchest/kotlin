@@ -4,6 +4,7 @@
 // Test that we are not actually trying to access nonexistent companion object
 
 @JsName("null")
+@Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface I {
     companion object
 }

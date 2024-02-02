@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // EXPECTED_REACHABLE_NODES: 1238
 // FILE: bar.kt
 @file:JsQualifier("bar")
