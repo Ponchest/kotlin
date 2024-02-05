@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -51,15 +50,6 @@ interface InlineFunctionResolver {
         val TRIVIAL = object : InlineFunctionResolver {}
     }
 }
-
-fun IrFunction.isBuiltInSuspendCoroutine(): Boolean =
-    isTopLevelInPackage("suspendCoroutine", StandardNames.COROUTINES_PACKAGE_FQ_NAME)
-
-fun IrFunction.isBuiltInSuspendCoroutineUninterceptedOrReturn(): Boolean =
-    isTopLevelInPackage(
-        "suspendCoroutineUninterceptedOrReturn",
-        StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
-    )
 
 open class InlineFunctionResolverReplacingCoroutineIntrinsics(open val context: CommonBackendContext) : InlineFunctionResolver {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
