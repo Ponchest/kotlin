@@ -24376,6 +24376,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("typeOperator.kt")
+                public void testTypeOperator() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/typeOperator.kt");
+                }
+
+                @Test
                 @TestMetadata("types.kt")
                 public void testTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/types.kt");
