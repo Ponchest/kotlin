@@ -24226,6 +24226,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("compareArrayLiteralInAnnotation.kt")
+                public void testCompareArrayLiteralInAnnotation() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/compareArrayLiteralInAnnotation.kt");
+                }
+
+                @Test
+                @TestMetadata("compareEnums.kt")
+                public void testCompareEnums() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/compareEnums.kt");
+                }
+
+                @Test
                 @TestMetadata("complexBooleanInStringConcat_after.kt")
                 public void testComplexBooleanInStringConcat_after() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/complexBooleanInStringConcat_after.kt");
@@ -24391,6 +24403,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("unsigned.kt")
                 public void testUnsigned() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/unsigned.kt");
+                }
+
+                @Test
+                @TestMetadata("wrongTypeInStringConcatenation.kt")
+                public void testWrongTypeInStringConcatenation() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/wrongTypeInStringConcatenation.kt");
                 }
             }
 
