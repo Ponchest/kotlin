@@ -24256,6 +24256,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("constValGetWrongConstVal.kt")
+                public void testConstValGetWrongConstVal() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/constValGetWrongConstVal.kt");
+                }
+
+                @Test
                 @TestMetadata("enumConstName_after.kt")
                 public void testEnumConstName_after() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/enumConstName_after.kt");
