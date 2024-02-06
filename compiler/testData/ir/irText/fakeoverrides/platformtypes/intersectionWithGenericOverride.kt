@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
+// KT-65207
 
 // MODULE: separate
 // FILE: JavaSeparateModule.java

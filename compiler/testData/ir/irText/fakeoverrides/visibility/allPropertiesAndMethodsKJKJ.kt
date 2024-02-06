@@ -1,5 +1,7 @@
-// ISSUE: KT-61360
 // TARGET_BACKEND: JVM
+// FULL_JDK
+// Difference in $this (parent)
+
 // FILE: J1.java
 public class J1 {
     public int j11;

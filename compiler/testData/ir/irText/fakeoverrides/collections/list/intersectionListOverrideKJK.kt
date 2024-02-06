@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
+// There is a difference between K2 and ENABLE_IR_FAKE_OVERRIDE_GENERATION but not in K1/K2+ENABLE_IR_FAKE_OVERRIDE_GENERATION
 
 // FILE: 1.kt
 import java.util.*

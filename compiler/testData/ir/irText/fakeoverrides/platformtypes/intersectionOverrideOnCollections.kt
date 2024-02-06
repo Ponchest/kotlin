@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB
+// KT-65207
 
 // FILE: Java1.java
 import java.util.*;

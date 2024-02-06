@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB
+// Difference in $this (parent)
 
 // FILE: Java1.java
 

@@ -1,5 +1,7 @@
-// ISSUE: KT-61360
 // TARGET_BACKEND: JVM
+// FULL_JDK
+// Difference in $this (parent)
+
 // FILE: J.java
 public class J extends A {
     public int j1;

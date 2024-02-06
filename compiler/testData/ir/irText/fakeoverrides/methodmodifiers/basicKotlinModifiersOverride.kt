@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
+// Difference in external - decided it is not important
 
 // FILE: Java1.java
 

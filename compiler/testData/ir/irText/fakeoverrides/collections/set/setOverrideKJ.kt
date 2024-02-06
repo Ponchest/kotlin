@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB
+// Difference in $this (parent)
 
 // FILE: 1.kt
 import java.util.SortedSet

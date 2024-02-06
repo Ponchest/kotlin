@@ -1,6 +1,7 @@
-// ISSUE: KT-61360
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K1: ANY
+// FULL_JDK
+// Difference in $this (parent)
+
 // FILE: J.java
 public class J extends B {}
 

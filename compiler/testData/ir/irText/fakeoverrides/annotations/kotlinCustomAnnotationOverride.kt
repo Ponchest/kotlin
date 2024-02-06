@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
+// KT-65388
 
 // FILE: Java1.java
 public class Java1 extends A {

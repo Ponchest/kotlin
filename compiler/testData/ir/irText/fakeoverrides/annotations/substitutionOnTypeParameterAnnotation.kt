@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
+// KT-65302
 
 // FILE: Java1.java
 import org.jetbrains.annotations.NotNull;

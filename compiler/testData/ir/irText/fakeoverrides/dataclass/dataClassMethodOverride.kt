@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
+// There is a difference between K2 and K2+Xuse-ir-fake-override-builder, but where is no between K2+ Xuse-ir-fake-override-builder and K1
 
 // FILE: Java1.java
 public class Java1 {
