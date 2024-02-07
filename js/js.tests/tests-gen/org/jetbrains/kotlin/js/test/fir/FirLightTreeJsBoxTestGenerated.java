@@ -7165,6 +7165,12 @@ public class FirLightTreeJsBoxTestGenerated extends AbstractFirLightTreeJsBoxTes
         }
 
         @Test
+        @TestMetadata("logicalOperators.kt")
+        public void testLogicalOperators() throws Exception {
+            runTest("js/js.translator/testData/box/jsAstOptimizations/logicalOperators.kt");
+        }
+
+        @Test
         @TestMetadata("tempVarDeclOnAssignment.kt")
         public void testTempVarDeclOnAssignment() throws Exception {
             runTest("js/js.translator/testData/box/jsAstOptimizations/tempVarDeclOnAssignment.kt");
