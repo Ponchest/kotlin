@@ -41,14 +41,14 @@ fun IrValueParameter.isInlineParameter(type: IrType = this.type) =
 fun IrExpression.isAdaptedFunctionReference() =
     this is IrBlock && this.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
 
-interface InlineFunctionResolver {
-    fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction = symbol.owner
-    fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
+abstract class InlineFunctionResolver {
+    open fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction = symbol.owner
+    open fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
         return Symbols.isLateinitIsInitializedPropertyGetter(symbol) || Symbols.isTypeOfIntrinsic(symbol)
     }
 
     companion object {
-        val TRIVIAL = object : InlineFunctionResolver {}
+        val TRIVIAL = object : InlineFunctionResolver() {}
     }
 }
 
@@ -58,7 +58,7 @@ fun IrFunction.isBuiltInSuspendCoroutineUninterceptedOrReturn(): Boolean =
         StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
     )
 
-open class InlineFunctionResolverReplacingCoroutineIntrinsics(open val context: CommonBackendContext) : InlineFunctionResolver {
+open class InlineFunctionResolverReplacingCoroutineIntrinsics(open val context: CommonBackendContext) : InlineFunctionResolver() {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
         val function = symbol.owner
         // TODO: Remove these hacks when coroutine intrinsics are fixed.
