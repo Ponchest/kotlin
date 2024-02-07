@@ -43,10 +43,11 @@ fun IrExpression.isAdaptedFunctionReference() =
 
 abstract class InlineFunctionResolver {
     open fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
+        if (shouldExcludeFunctionFromInlining(symbol)) return null
         return symbol.owner
     }
 
-    open fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
+    protected open fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
         return Symbols.isLateinitIsInitializedPropertyGetter(symbol) || Symbols.isTypeOfIntrinsic(symbol)
     }
 
@@ -63,7 +64,7 @@ fun IrFunction.isBuiltInSuspendCoroutineUninterceptedOrReturn(): Boolean =
 
 open class InlineFunctionResolverReplacingCoroutineIntrinsics(open val context: CommonBackendContext) : InlineFunctionResolver() {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
-        val function = symbol.owner
+        val function = super.getFunctionDeclaration(symbol) ?: return null
         // TODO: Remove these hacks when coroutine intrinsics are fixed.
         return when {
             function.isBuiltInSuspendCoroutineUninterceptedOrReturn() ->
@@ -107,7 +108,7 @@ class FunctionInlining(
             is IrConstructorCall -> expression.symbol.owner
             else -> return expression
         }
-        if (!callee.needsInlining || inlineFunctionResolver.shouldExcludeFunctionFromInlining(callee.symbol))
+        if (!callee.needsInlining)
             return expression
 
         val target = (callee as? IrSimpleFunction)?.resolveFakeOverride() ?: callee
