@@ -29,12 +29,20 @@ class JvmAbiOutputExtension(
     private val removeDebugInfo: Boolean,
     private val removeDataClassCopyIfConstructorIsPrivate: Boolean,
     private val preserveDeclarationOrder: Boolean,
+    private val removeInternalDeclarations: Boolean,
 ) : ClassFileFactoryFinalizerExtension {
     override fun finalizeClassFactory(factory: ClassFileFactory) {
         // We need to wait until the end to produce any output in order to strip classes
         // from the InnerClasses attributes.
         val outputFiles =
-            AbiOutputFiles(abiClassInfoBuilder(), factory, removeDebugInfo, removeDataClassCopyIfConstructorIsPrivate, preserveDeclarationOrder)
+            AbiOutputFiles(
+                abiClassInfoBuilder(),
+                factory,
+                removeDebugInfo,
+                removeDataClassCopyIfConstructorIsPrivate,
+                preserveDeclarationOrder,
+                removeInternalDeclarations,
+            )
         if (outputPath.extension == "jar") {
             // We don't include the runtime or main class in interface jars and always reset time stamps.
             CompileEnvironmentUtil.writeToJar(
@@ -59,6 +67,7 @@ class JvmAbiOutputExtension(
         val removeDebugInfo: Boolean,
         val removeCopyAlongWithConstructor: Boolean,
         val preserveDeclarationOrder: Boolean,
+        val removeInternalDeclarations: Boolean,
     ) : OutputFileCollection {
         private val classesToBeDeleted = abiClassInfos.mapNotNullTo(mutableSetOf()) { (className, action) ->
             className.takeIf { action == AbiClassInfo.Deleted }
@@ -83,6 +92,7 @@ class JvmAbiOutputExtension(
                     is AbiClassInfo.Stripped -> {
                         val prune = abiInfo.prune
                         val methodInfo = abiInfo.methodInfo
+                        val fieldsInAbi = abiInfo.fieldsInAbi
                         val innerClassesToKeep = mutableSetOf<String>()
                         val noMethodsKept = methodInfo.values.none { it == AbiMethodInfo.KEEP }
                         val writer = ClassWriter(0)
@@ -98,12 +108,12 @@ class JvmAbiOutputExtension(
                             // Strip private fields.
                             override fun visitField(
                                 access: Int,
-                                name: String?,
-                                descriptor: String?,
+                                name: String,
+                                descriptor: String,
                                 signature: String?,
                                 value: Any?,
                             ): FieldVisitor? {
-                                if (prune || access and Opcodes.ACC_PRIVATE != 0)
+                                if (prune || Member(name, descriptor) !in fieldsInAbi)
                                     return null
                                 return FieldNode(access, name, descriptor, signature, value).also {
                                     keptFields += it
@@ -164,7 +174,8 @@ class JvmAbiOutputExtension(
                                     removeCopyAlongWithConstructor,
                                     preserveDeclarationOrder,
                                     classesToBeDeleted,
-                                    prune
+                                    prune,
+                                    removeInternalDeclarations,
                                 )
                             }
 

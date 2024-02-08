@@ -91,6 +91,9 @@ abstract class BaseJvmAbiTest : TestCase() {
                 abiOption(JvmAbiCommandLineProcessor.REMOVE_PRIVATE_CLASSES_OPTION.optionName, true.toString()).takeIf {
                     InTextDirectivesUtils.findStringWithPrefixes(directives, "// REMOVE_PRIVATE_CLASSES") != null
                 },
+                abiOption(JvmAbiCommandLineProcessor.REMOVE_INTERNAL_DECLARATIONS_OPTION.optionName, true.toString()).takeIf {
+                    InTextDirectivesUtils.findStringWithPrefixes(directives, "// REMOVE_INTERNAL_DECLARATIONS") != null
+                },
             ).toTypedArray()
             destination = compilation.destinationDir.canonicalPath
             noSourceDebugExtension = InTextDirectivesUtils.findStringWithPrefixes(directives, "// NO_SOURCE_DEBUG_EXTENSION") != null

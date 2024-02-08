@@ -55,7 +55,7 @@ internal class JvmAbiClassInfoBuilder(private val removePrivateClasses: Boolean)
 
         for (outerClass in generateSequence(className, innerClassToOuter::get).drop(1)) {
             if (abiClassInfo[outerClass] == AbiClassInfo.Deleted) {
-                abiClassInfo[outerClass] = AbiClassInfo.Stripped(emptyMap(), prune = true)
+                abiClassInfo[outerClass] = AbiClassInfo.Stripped(emptyMap(), emptySet(), prune = true)
             }
         }
 
