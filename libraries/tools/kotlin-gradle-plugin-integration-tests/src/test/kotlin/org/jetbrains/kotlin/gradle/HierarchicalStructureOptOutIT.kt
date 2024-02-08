@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.params.ParameterizedTest
@@ -18,9 +19,9 @@ import java.util.stream.Stream
 import java.util.zip.ZipFile
 import kotlin.io.path.deleteIfExists
 import kotlin.streams.asStream
+import kotlin.streams.toList
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import kotlin.streams.toList
 
 @MppGradlePluginTests
 @DisplayName("Hierarchical multiplatform publication artifact content")
@@ -84,7 +85,7 @@ internal class HierarchicalStructureOptInMigrationArtifactContentMppIT : KGPBase
 
     class GradleAndHmppModeProvider : GradleArgumentsProvider() {
         override fun provideArguments(
-            context: ExtensionContext
+            context: ExtensionContext,
         ): Stream<out Arguments> {
             val gradleVersions = super.provideArguments(context).map { it.get().first() as GradleVersion }.toList()
 
@@ -104,5 +105,6 @@ internal class HierarchicalStructureOptInMigrationArtifactContentMppIT : KGPBase
     @GradleTestVersions
     @ParameterizedTest(name = "{0} mode {1}: {displayName}")
     @ArgumentsSource(GradleAndHmppModeProvider::class)
+    @ExtendWith(DisabledIfNoArgumentsProvided::class)
     annotation class GradleWithHmppModeTest
 }

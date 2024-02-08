@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.testbase;
 
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
@@ -20,5 +21,6 @@ import java.lang.annotation.Target;
 @GradleTestVersions
 @ParameterizedTest(name = "{0}: {displayName}")
 @ArgumentsSource(GradleArgumentsProvider.class)
+@ExtendWith(DisabledIfNoArgumentsProvided.class)
 public @interface GradleTest {
 }

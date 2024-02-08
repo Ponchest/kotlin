@@ -9,6 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -24,6 +25,7 @@ class XcodeDirectIntegrationIT : KGPBaseTest() {
     @DisplayName("Xcode direct integration")
     @ParameterizedTest(name = "{displayName} with {1}, {0} and isStatic={2}")
     @ArgumentsSource(XcodeArgumentsProvider::class)
+    @ExtendWith(DisabledIfNoArgumentsProvided::class)
     fun test(
         gradleVersion: GradleVersion,
         iosApp: String,

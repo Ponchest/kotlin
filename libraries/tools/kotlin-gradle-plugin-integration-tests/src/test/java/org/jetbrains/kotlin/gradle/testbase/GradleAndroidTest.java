@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.testbase;
 
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
@@ -21,5 +22,6 @@ import java.lang.annotation.Target;
 @AndroidTestVersions
 @ParameterizedTest(name = "AGP {1} with {0}: {displayName}")
 @ArgumentsSource(GradleAndAgpArgumentsProvider.class)
+@ExtendWith(DisabledIfNoArgumentsProvided.class)
 public @interface GradleAndroidTest {
 }

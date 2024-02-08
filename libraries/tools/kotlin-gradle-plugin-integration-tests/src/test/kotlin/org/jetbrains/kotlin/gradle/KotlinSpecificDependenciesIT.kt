@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.*
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.ArgumentsSource
 import java.nio.file.Path
 import java.util.*
 import java.util.stream.Stream
@@ -124,7 +125,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     fun testStdlibDefaultAndroid(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkVersion: JdkVersions.ProvidedJdk
+        jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         project(
             "AndroidLibraryKotlinProject",
@@ -149,7 +150,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     fun testStdlibDisabledAndroid(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkVersion: JdkVersions.ProvidedJdk
+        jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         project(
             "AndroidLibraryKotlinProject",
@@ -371,7 +372,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     fun kotlinTestSingleDependencyAndroidUnitTests(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkVersion: JdkVersions.ProvidedJdk
+        jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         project(
             "AndroidLibraryKotlinProject",
@@ -397,7 +398,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     fun kotlinTestSingleDependencyAndroidUiTests(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkVersion: JdkVersions.ProvidedJdk
+        jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         project(
             "AndroidLibraryKotlinProject",
@@ -513,9 +514,10 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     @GradleTestVersions
     @ParameterizedTest(name = "{1} with {0}: {displayName}")
     @ArgumentsSource(GradleAndTestFrameworksArgumentsProvider::class)
+    @ExtendWith(DisabledIfNoArgumentsProvided::class)
     fun testFrameworkSelectionJvm(
         gradleVersion: GradleVersion,
-        testFramework: Pair<String, String>
+        testFramework: Pair<String, String>,
     ) {
         project("simpleProject", gradleVersion) {
             removeDependencies(buildGradle)
@@ -536,9 +538,10 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     @GradleTestVersions
     @ParameterizedTest(name = "{1} with {0}: {displayName}")
     @ArgumentsSource(GradleAndTestFrameworksArgumentsProvider::class)
+    @ExtendWith(DisabledIfNoArgumentsProvided::class)
     fun testFrameworkSelectionMppJvm(
         gradleVersion: GradleVersion,
-        testFramework: Pair<String, String>
+        testFramework: Pair<String, String>,
     ) {
         project("jvm-and-js-hmpp", gradleVersion) {
             removeDependencies(buildGradleKts)
@@ -560,9 +563,10 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     @GradleTestVersions
     @ParameterizedTest(name = "{1} with {0}: {displayName}")
     @ArgumentsSource(GradleAndTestFrameworksArgumentsProvider::class)
+    @ExtendWith(DisabledIfNoArgumentsProvided::class)
     fun testFrameworkSelectionMppCommon(
         gradleVersion: GradleVersion,
-        testFramework: Pair<String, String>
+        testFramework: Pair<String, String>,
     ) {
         project("jvm-and-js-hmpp", gradleVersion) {
             removeDependencies(buildGradleKts)
@@ -664,7 +668,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         configurationsToAddDependency: List<String>,
         classpathElementsExpectedByTask: Map<String, List<String>>,
         filesExpectedByConfiguration: Map<String, List<String>> = emptyMap(),
-        isBuildGradleKts: Boolean = false
+        isBuildGradleKts: Boolean = false,
     ) {
         val buildFile = if (isBuildGradleKts) buildGradleKts else buildGradle
         removeDependencies(buildFile)
@@ -697,7 +701,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         configurationName: String,
         checkModulesInResolutionResult: List<String> = emptyList(),
         checkModulesNotInResolutionResult: List<String> = emptyList(),
-        isBuildGradleKts: Boolean
+        isBuildGradleKts: Boolean,
     ) {
         val expression = """configurations["$configurationName"].toList()"""
         checkPrintedItems(
@@ -714,7 +718,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         taskPath: String,
         checkModulesInClasspath: List<String> = emptyList(),
         checkModulesNotInClasspath: List<String> = emptyList(),
-        isBuildGradleKts: Boolean = false
+        isBuildGradleKts: Boolean = false,
     ) {
         val subproject = taskPath.substringBeforeLast(":").takeIf { it.isNotEmpty() && it != taskPath }
         val taskName = taskPath.removePrefix(subproject.orEmpty())
@@ -733,7 +737,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         itemsExpression: String,
         checkAnyItemsContains: List<String>,
         checkNoItemContains: List<String>,
-        isBuildGradleKts: Boolean
+        isBuildGradleKts: Boolean,
     ) {
         val printingTaskName = "printItems${UUID.randomUUID()}"
         val buildFile = if (subproject != null) {
@@ -771,7 +775,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     }
 
     private fun removeDependencies(
-        buildGradleFile: Path
+        buildGradleFile: Path,
     ) {
         buildGradleFile.modify {
             it.lines()
@@ -784,7 +788,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
 
     internal class GradleAndTestFrameworksArgumentsProvider : GradleArgumentsProvider() {
         override fun provideArguments(
-            context: ExtensionContext
+            context: ExtensionContext,
         ): Stream<out Arguments> {
             val gradleVersions = super.provideArguments(context).map { it.get().first() as GradleVersion }.toList()
             return testFrameworks
