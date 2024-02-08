@@ -181,6 +181,7 @@ constructor(
         }
     }
 
+    @Deprecated("Binaryen is enabled by default. This call is redundant.")
     override fun applyBinaryen(body: BinaryenExec.() -> Unit) {
     }
 
