@@ -478,6 +478,7 @@ object KotlinToJVMBytecodeCompiler {
 
         performanceManager?.notifyIRGenerationStarted()
         codegenFactory.invokeCodegen(codegenInput)
+        codegenFactory.invokeModuleMetadataGeneration(codegenInput)
 
         CodegenFactory.doCheckCancelled(state)
         state.factory.done()

@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
-class FirJvmSerializerExtension(
+open class FirJvmSerializerExtension(
     override val session: FirSession,
     private val bindings: JvmSerializationBindings,
     private val metadata: MetadataSource?,
@@ -81,7 +81,8 @@ class FirJvmSerializerExtension(
         localPoppedUpClasses: List<IrAttributeContainer>,
         approximator: AbstractTypeApproximator,
         typeMapper: IrTypeMapper,
-        components: Fir2IrComponents
+        components: Fir2IrComponents,
+        stringTable: FirElementAwareStringTable = FirJvmElementAwareStringTable(typeMapper, components, localPoppedUpClasses)
     ) : this(
         session,
         bindings,
@@ -97,7 +98,7 @@ class FirJvmSerializerExtension(
         state.config.unifiedNullChecks,
         state.config.metadataVersion,
         state.jvmDefaultMode,
-        FirJvmElementAwareStringTable(typeMapper, components, localPoppedUpClasses),
+        stringTable,
         ConstValueProviderImpl(components),
         components.annotationsFromPluginRegistrar.createAdditionalMetadataProvider()
     )

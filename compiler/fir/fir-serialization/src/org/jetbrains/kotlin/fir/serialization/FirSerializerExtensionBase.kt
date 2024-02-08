@@ -35,7 +35,7 @@ abstract class FirSerializerExtensionBase(
         versionRequirementTable: MutableVersionRequirementTable,
         childSerializer: FirElementSerializer
     ) {
-        klass.serializeAnnotations(proto, protocol.classAnnotation)
+        klass.serializeAnnotations(session, additionalMetadataProvider, annotationSerializer, proto, protocol.classAnnotation)
     }
 
     override fun serializeScript(
@@ -50,7 +50,7 @@ abstract class FirSerializerExtensionBase(
         proto: ProtoBuf.Constructor.Builder,
         childSerializer: FirElementSerializer
     ) {
-        constructor.serializeAnnotations(proto, protocol.constructorAnnotation)
+        constructor.serializeAnnotations(session, additionalMetadataProvider, annotationSerializer, proto, protocol.constructorAnnotation)
     }
 
     override fun serializeFunction(
@@ -59,8 +59,14 @@ abstract class FirSerializerExtensionBase(
         versionRequirementTable: MutableVersionRequirementTable?,
         childSerializer: FirElementSerializer
     ) {
-        function.serializeAnnotations(proto, protocol.functionAnnotation)
-        function.receiverParameter?.serializeAnnotations(proto, protocol.functionExtensionReceiverAnnotation)
+        function.serializeAnnotations(session, additionalMetadataProvider, annotationSerializer, proto, protocol.functionAnnotation)
+        function.receiverParameter?.serializeAnnotations(
+            session,
+            additionalMetadataProvider,
+            annotationSerializer,
+            proto,
+            protocol.functionExtensionReceiverAnnotation
+        )
     }
 
     override fun serializeProperty(
@@ -84,9 +90,27 @@ abstract class FirSerializerExtensionBase(
         fieldPropertyAnnotations.serializeAnnotations(proto, protocol.propertyBackingFieldAnnotation)
         delegatePropertyAnnotations.serializeAnnotations(proto, protocol.propertyDelegatedFieldAnnotation)
 
-        property.getter?.serializeAnnotations(proto, protocol.propertyGetterAnnotation)
-        property.setter?.serializeAnnotations(proto, protocol.propertySetterAnnotation)
-        property.receiverParameter?.serializeAnnotations(proto, protocol.propertyExtensionReceiverAnnotation)
+        property.getter?.serializeAnnotations(
+            session,
+            additionalMetadataProvider,
+            annotationSerializer,
+            proto,
+            protocol.propertyGetterAnnotation
+        )
+        property.setter?.serializeAnnotations(
+            session,
+            additionalMetadataProvider,
+            annotationSerializer,
+            proto,
+            protocol.propertySetterAnnotation
+        )
+        property.receiverParameter?.serializeAnnotations(
+            session,
+            additionalMetadataProvider,
+            annotationSerializer,
+            proto,
+            protocol.propertyExtensionReceiverAnnotation
+        )
 
         if (!Flags.HAS_CONSTANT.get(proto.flags)) return
         property.initializer?.toConstantValue<ConstantValue<*>>(session, constValueProvider)?.let {
@@ -95,11 +119,11 @@ abstract class FirSerializerExtensionBase(
     }
 
     override fun serializeEnumEntry(enumEntry: FirEnumEntry, proto: ProtoBuf.EnumEntry.Builder) {
-        enumEntry.serializeAnnotations(proto, protocol.enumEntryAnnotation)
+        enumEntry.serializeAnnotations(session, additionalMetadataProvider, annotationSerializer, proto, protocol.enumEntryAnnotation)
     }
 
     override fun serializeValueParameter(parameter: FirValueParameter, proto: ProtoBuf.ValueParameter.Builder) {
-        parameter.serializeAnnotations(proto, protocol.parameterAnnotation)
+        parameter.serializeAnnotations(session, additionalMetadataProvider, annotationSerializer, proto, protocol.parameterAnnotation)
     }
 
     override fun serializeTypeAnnotations(annotations: List<FirAnnotation>, proto: ProtoBuf.Type.Builder) {
@@ -107,19 +131,13 @@ abstract class FirSerializerExtensionBase(
     }
 
     override fun serializeTypeParameter(typeParameter: FirTypeParameter, proto: ProtoBuf.TypeParameter.Builder) {
-        typeParameter.serializeAnnotations(proto, protocol.typeParameterAnnotation)
-    }
-
-    @Suppress("Reformat")
-    private fun <
-        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>,
-        BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
-    > FirAnnotationContainer.serializeAnnotations(
-        proto: GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>,
-        extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Annotation>>?
-    ) {
-        if (extension == null) return
-        this.allRequiredAnnotations(session).serializeAnnotations(proto, extension)
+        typeParameter.serializeAnnotations(
+            session,
+            additionalMetadataProvider,
+            annotationSerializer,
+            proto,
+            protocol.typeParameterAnnotation
+        )
     }
 
     @Suppress("Reformat")
