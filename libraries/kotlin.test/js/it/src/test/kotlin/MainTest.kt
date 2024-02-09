@@ -87,8 +87,7 @@ class AsyncTest {
 
     @Test
     fun checkCustomPromise(): CustomPromise {
-//        return promise(10, "afterCustom") as CustomPromise
-        return promise(10, "") as CustomPromise
+        return promise(10, "afterCustom") as CustomPromise
     }
 
     @Test
