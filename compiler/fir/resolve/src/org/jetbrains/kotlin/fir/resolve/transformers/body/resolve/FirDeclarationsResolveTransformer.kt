@@ -1269,7 +1269,7 @@ open class FirDeclarationsResolveTransformer(
             val resultType = when {
                 initializer != null -> {
                     val unwrappedInitializer = initializer.unwrapSmartcastExpression()
-                    unwrappedInitializer.resolvedType.toFirResolvedTypeRef()
+                    unwrappedInitializer.resolvedType.toFirResolvedTypeRef(unwrappedInitializer.source)
                 }
                 variable.getter?.body is FirSingleExpressionBlock -> variable.getter?.returnTypeRef
                 else -> null
@@ -1308,14 +1308,13 @@ open class FirDeclarationsResolveTransformer(
             }
             is FirErrorTypeRef -> buildErrorTypeRef {
                 diagnostic = this@toExpectedTypeRef.diagnostic
-                this@toExpectedTypeRef.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)?.let {
-                    source = it
-                }
+                source = this@toExpectedTypeRef.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
                 annotations.addAll(this@toExpectedTypeRef.annotations)
             }
             else -> {
                 buildResolvedTypeRef {
                     type = this@toExpectedTypeRef.coneType
+                    source = this@toExpectedTypeRef.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
                     annotations.addAll(this@toExpectedTypeRef.annotations)
                 }
             }
