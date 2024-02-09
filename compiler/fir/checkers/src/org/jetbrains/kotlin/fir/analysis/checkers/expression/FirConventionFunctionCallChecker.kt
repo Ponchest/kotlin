@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePropertyAsOperator
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePropertyAsOperatorOrIterator
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -49,7 +49,8 @@ object FirConventionFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.
         // KT-61905: TODO: Return also in case of error type.
         val unwrapped = receiver?.unwrapSmartcastExpression()
         if (unwrapped !is FirPropertyAccessExpression) return
-        val diagnostic = unwrapped.nonFatalDiagnostics.firstIsInstanceOrNull<ConePropertyAsOperator>() ?: return
-        reporter.reportOn(callExpression.calleeReference.source, FirErrors.PROPERTY_AS_OPERATOR, diagnostic.symbol, context)
+        val diagnostic = unwrapped.nonFatalDiagnostics.firstIsInstanceOrNull<ConePropertyAsOperatorOrIterator>() ?: return
+        val diagnosticFactory = if (diagnostic.isOperator) FirErrors.PROPERTY_AS_OPERATOR else FirErrors.PROPERTY_AS_ITERATOR
+        reporter.reportOn(callExpression.calleeReference.source, diagnosticFactory, diagnostic.symbol, context)
     }
 }

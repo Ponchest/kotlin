@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.FirPropertyAccessExpressionBuilder
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePropertyAsOperator
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePropertyAsOperatorOrIterator
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
@@ -333,8 +333,9 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
             explicitReceiver = info.explicitReceiver
         }
 
-        if (candidate.currentApplicability == CandidateApplicability.K2_PROPERTY_AS_OPERATOR) {
-            nonFatalDiagnostics.add(ConePropertyAsOperator(candidate.symbol as FirPropertySymbol))
+        if (candidate.currentApplicability == CandidateApplicability.K2_PROPERTY_AS_OPERATOR_OR_ITERATOR) {
+            val diagnostic = candidate.diagnostics.single { it is PropertyAsOperatorOrIterator } as PropertyAsOperatorOrIterator
+            nonFatalDiagnostics.add(ConePropertyAsOperatorOrIterator(diagnostic.propertySymbol, diagnostic.isOperator))
         }
         source = fakeSource
     }.build().let {

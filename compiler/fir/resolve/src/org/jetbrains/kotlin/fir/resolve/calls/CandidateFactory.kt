@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class CandidateFactory private constructor(
     val context: ResolutionContext,
@@ -100,7 +101,9 @@ class CandidateFactory private constructor(
         } else if (objectsByName && symbol.isRegularClassWithoutCompanion(callInfo.session)) {
             result.addDiagnostic(NoCompanionObject)
         }
-        if (callInfo.origin == FirFunctionCallOrigin.Operator) {
+        if (callInfo.origin == FirFunctionCallOrigin.Operator ||
+            callSite is FirFunctionCall && callSite.calleeReference.name == OperatorNameConventions.ITERATOR
+        ) {
             val propertySymbol = when {
                 symbol is FirPropertySymbol -> symbol
                 callInfo.candidateForCommonInvokeReceiver != null -> callInfo.candidateForCommonInvokeReceiver.symbol as? FirPropertySymbol
@@ -108,7 +111,12 @@ class CandidateFactory private constructor(
             }
             if (propertySymbol != null) {
                 // Flag all property references that are resolved from an convention operator call.
-                result.addDiagnostic(PropertyAsOperator(propertySymbol))
+                result.addDiagnostic(
+                    PropertyAsOperatorOrIterator(
+                        propertySymbol,
+                        isOperator = callInfo.origin == FirFunctionCallOrigin.Operator
+                    )
+                )
             }
         }
         if (symbol is FirPropertySymbol &&

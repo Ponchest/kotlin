@@ -793,6 +793,7 @@ object FirErrors {
     val INC_DEC_SHOULD_NOT_RETURN_UNIT: KtDiagnosticFactory0 by error0<KtExpression>(SourceElementPositioningStrategies.OPERATOR)
     val ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT: KtDiagnosticFactory2<FirNamedFunctionSymbol, String> by error2<KtExpression, FirNamedFunctionSymbol, String>(SourceElementPositioningStrategies.OPERATOR)
     val PROPERTY_AS_OPERATOR: KtDiagnosticFactory1<FirPropertySymbol> by error1<PsiElement, FirPropertySymbol>(SourceElementPositioningStrategies.OPERATOR)
+    val PROPERTY_AS_ITERATOR: KtDiagnosticFactory1<FirPropertySymbol> by error1<PsiElement, FirPropertySymbol>()
     val DSL_SCOPE_VIOLATION: KtDiagnosticFactory1<FirBasedSymbol<*>> by error1<PsiElement, FirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
 
     // Type alias

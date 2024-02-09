@@ -3150,6 +3150,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val property: KtVariableSymbol
     }
 
+    interface PropertyAsIterator : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = PropertyAsIterator::class
+        val property: KtVariableSymbol
+    }
+
     interface DslScopeViolation : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = DslScopeViolation::class
         val calleeSymbol: KtSymbol

@@ -136,7 +136,10 @@ class OperatorCallOfConstructor(val constructor: FirConstructorSymbol) : Resolut
 class InferenceError(val constraintError: ConstraintSystemError) : ResolutionDiagnostic(constraintError.applicability)
 class Unsupported(val message: String, val source: KtSourceElement?) : ResolutionDiagnostic(K2_UNSUPPORTED)
 
-class PropertyAsOperator(val propertySymbol: FirPropertySymbol) : ResolutionDiagnostic(K2_PROPERTY_AS_OPERATOR)
+class PropertyAsOperatorOrIterator(
+    val propertySymbol: FirPropertySymbol,
+    val isOperator: Boolean
+) : ResolutionDiagnostic(K2_PROPERTY_AS_OPERATOR_OR_ITERATOR)
 
 class DslScopeViolation(val calleeSymbol: FirBasedSymbol<*>) : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
 

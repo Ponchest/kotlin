@@ -3793,6 +3793,12 @@ internal class PropertyAsOperatorImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.PropertyAsOperator
 
+internal class PropertyAsIteratorImpl(
+    override val property: KtVariableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.PropertyAsIterator
+
 internal class DslScopeViolationImpl(
     override val calleeSymbol: KtSymbol,
     firDiagnostic: KtPsiDiagnostic,
