@@ -34,6 +34,8 @@ fun box() {
 // test.kt:5 $box (18, 18, 18, 18)
 // test.kt:6 $box
 // test.kt:7 $box
+// Runtime.kt:66 $kotlin.wasm.internal.<init properties Runtime.kt> (35, 35, 35, 35)
+// Runtime.kt:67 $kotlin.wasm.internal.<init properties Runtime.kt> (36, 36, 36, 36)
 // Runtime.kt:47 $kotlin.wasm.internal.nullableEquals (25, 8, 25, 8)
 // Runtime.kt:49 $kotlin.wasm.internal.nullableEquals (25, 30, 37, 30, 4, 25, 30, 37, 30, 4)
 // Primitives.kt:1363 $kotlin.Int__equals-impl (42, 42, 24, 48, 42, 42, 24, 48)

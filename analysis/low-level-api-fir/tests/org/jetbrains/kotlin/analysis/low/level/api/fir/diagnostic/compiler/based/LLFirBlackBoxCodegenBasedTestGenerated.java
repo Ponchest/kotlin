@@ -1993,6 +1993,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
         }
 
         @Test
+        @TestMetadata("boxedBooleanIdentity.kt")
+        public void testBoxedBooleanIdentity() throws Exception {
+            runTest("compiler/testData/codegen/box/boxingOptimization/boxedBooleanIdentity.kt");
+        }
+
+        @Test
         @TestMetadata("boxedIntegersCmp.kt")
         public void testBoxedIntegersCmp() throws Exception {
             runTest("compiler/testData/codegen/box/boxingOptimization/boxedIntegersCmp.kt");

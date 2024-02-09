@@ -134,6 +134,8 @@ fun box(): String {
 // MemoryAccess.kt:16 $kotlin.wasm.unsafe.<Pointer__<init>-impl>
 // MemoryAccess.kt:16 $kotlin.wasm.unsafe.<Pointer__<get-address>-impl>
 // UInt.kt:17 $kotlin.<UInt__<get-data>-impl>
+// Runtime.kt:66 $kotlin.wasm.internal.<init properties Runtime.kt> (35, 35, 35, 35)
+// Runtime.kt:67 $kotlin.wasm.internal.<init properties Runtime.kt> (36, 36, 36, 36)
 // Runtime.kt:32 $kotlin.wasm.internal.unsafeWasmCharArrayToRawMemory (18, 4)
 // Runtime.kt:33 $kotlin.wasm.internal.unsafeWasmCharArrayToRawMemory (23, 35, 23, 4)
 // Runtime.kt:34 $kotlin.wasm.internal.unsafeWasmCharArrayToRawMemory (19, 4)
