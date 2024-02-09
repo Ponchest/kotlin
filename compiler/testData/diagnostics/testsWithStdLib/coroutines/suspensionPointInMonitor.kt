@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -USELESS_IS_CHECK
 // SKIP_TXT
 import kotlin.concurrent.withLock

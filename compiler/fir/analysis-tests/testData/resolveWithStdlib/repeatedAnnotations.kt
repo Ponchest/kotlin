@@ -23,14 +23,14 @@ fun <T> foo(bar: () -> T) {
 @Target(AnnotationTarget.TYPE)
 annotation class Ann
 
-fun baz(): @Ann <!REPEATED_ANNOTATION!>@Ann<!> String = "12"
+fun baz(): @Ann @Ann String = "12"
 fun qux() = Some.foo()[0]
 
 fun test() {
     foo({ Some.foo()[0] })
     foo({ baz() })
     foo({ qux() })
-    foo(fun(): @Ann <!REPEATED_ANNOTATION!>@Ann<!> String {
+    foo(fun(): @Ann @Ann String {
         return ""
     })
 }

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
 class Expression<T>(val x: T)
 

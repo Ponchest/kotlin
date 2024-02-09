@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // NI_EXPECTED_FILE
 
 class Foo<A : Number>

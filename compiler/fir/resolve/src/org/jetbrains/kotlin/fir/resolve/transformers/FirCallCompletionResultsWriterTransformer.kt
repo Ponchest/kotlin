@@ -698,24 +698,26 @@ class FirCallCompletionResultsWriterTransformer(
     ): List<FirTypeProjection> {
         val typeArguments = computeTypeArgumentTypes(candidate)
             .mapIndexed { index, type ->
-                when (val argument = access.typeArguments.getOrNull(index)) {
+                val argument = access.typeArguments.getOrNull(index)
+                val sourceForTypeArgument = argument?.source ?: access.calleeReference.source
+                when (argument) {
                     is FirTypeProjectionWithVariance -> {
                         val typeRef = argument.typeRef as FirResolvedTypeRef
                         buildTypeProjectionWithVariance {
-                            source = argument.source
+                            source = sourceForTypeArgument
                             this.typeRef = if (typeRef.type is ConeErrorType) typeRef else typeRef.withReplacedConeType(type)
                             variance = argument.variance
                         }
                     }
                     is FirStarProjection -> {
                         buildStarProjection {
-                            source = argument.source
+                            source = sourceForTypeArgument
                         }
                     }
                     else -> {
                         buildTypeProjectionWithVariance {
-                            source = argument?.source
-                            typeRef = type.toFirResolvedTypeRef()
+                            source = sourceForTypeArgument
+                            typeRef = type.toFirResolvedTypeRef(sourceForTypeArgument)
                             variance = Variance.INVARIANT
                         }
                     }
@@ -806,7 +808,7 @@ class FirCallCompletionResultsWriterTransformer(
             ?: session.builtinTypes.unitType.type
 
         if (initialReturnType != resultReturnType) {
-            result.replaceReturnTypeRef(result.returnTypeRef.resolvedTypeFromPrototype(resultReturnType))
+            result.replaceReturnTypeRef(result.returnTypeRef.resolvedTypeFromPrototype(resultReturnType, result.source))
             session.lookupTracker?.recordTypeResolveAsLookup(result.returnTypeRef, result.source, context.file.source)
             needUpdateLambdaType = true
         }
