@@ -826,6 +826,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
     }
 
     @Test
+    @TestMetadata("kt65184.kt")
+    public void testKt65184() {
+      runTest("compiler/testData/diagnostics/tests/kt65184.kt");
+    }
+
+    @Test
     @TestMetadata("LValueAssignment.kt")
     public void testLValueAssignment() {
       runTest("compiler/testData/diagnostics/tests/LValueAssignment.kt");

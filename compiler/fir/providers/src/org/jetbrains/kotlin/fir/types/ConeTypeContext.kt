@@ -666,7 +666,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
                     parameter.symbol to ((argument as? ConeKotlinTypeProjection)?.type
                         ?: session.builtinTypes.nullableAnyType.type)//StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), isNullable = true))
                 }
-            substitutorByMap(substitution, session)
+            substitutorByMap(substitution, session, substituteNullableTypeToDefinitelyNonNull = false)
         } else {
             ConeSubstitutor.Empty
         }
