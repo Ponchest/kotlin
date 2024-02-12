@@ -268,7 +268,7 @@ private class LLFirBodyTargetResolver(
         val resolveSession = module.getFirResolveSession(ktCodeFragment.project) as LLFirResolvableResolveSession
 
         fun FirTowerDataContext.withExtraScopes(): FirTowerDataContext {
-            return resolveSession.useSiteFirSession.codeFragmentScopeProvider.getExtraScopes(ktCodeFragment)
+            return resolveSession.useSiteFirSession.codeFragmentScopeProvider.getExtraScopes(firCodeFragment, ktCodeFragment)
                 .fold(this) { context, scope -> context.addLocalScope(scope) }
         }
 

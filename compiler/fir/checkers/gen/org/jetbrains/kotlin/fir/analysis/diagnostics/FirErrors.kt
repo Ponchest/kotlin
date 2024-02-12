@@ -298,7 +298,7 @@ object FirErrors {
     val INAPPLICABLE_PARAM_TARGET: KtDiagnosticFactory0 by error0<KtAnnotationEntry>()
     val REDUNDANT_ANNOTATION_TARGET: KtDiagnosticFactory1<String> by warning1<KtAnnotationEntry, String>()
     val INAPPLICABLE_FILE_TARGET: KtDiagnosticFactory0 by error0<KtAnnotationEntry>(SourceElementPositioningStrategies.ANNOTATION_USE_SITE)
-    val REPEATED_ANNOTATION: KtDiagnosticFactory0 by error0<KtAnnotationEntry>()
+    val REPEATED_ANNOTATION: KtDiagnosticFactory0 by error0<PsiElement>()
     val REPEATED_ANNOTATION_WARNING: KtDiagnosticFactory0 by warning0<KtAnnotationEntry>()
     val NOT_A_CLASS: KtDiagnosticFactory0 by error0<PsiElement>()
     val WRONG_EXTENSION_FUNCTION_TYPE: KtDiagnosticFactory0 by error0<KtAnnotationEntry>()

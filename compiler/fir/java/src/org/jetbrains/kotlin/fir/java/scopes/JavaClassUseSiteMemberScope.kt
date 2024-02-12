@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.fir.java.scopes
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.isVisibleInClass
 import org.jetbrains.kotlin.fir.declarations.*
@@ -219,7 +221,9 @@ class JavaClassUseSiteMemberScope(
             val candidate = candidateSymbol.fir
             if (candidate.valueParameters.isNotEmpty()) return@factory null
 
-            val candidateReturnType = candidate.returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
+            val candidateReturnType = candidate.returnTypeRef.toConeKotlinTypeProbablyFlexible(
+                session, typeParameterStack, source?.fakeElement(KtFakeSourceElementKind.Enhancement)
+            )
 
             candidateSymbol.takeIf {
                 when {
@@ -241,10 +245,13 @@ class JavaClassUseSiteMemberScope(
             val candidate = candidateSymbol.fir
             if (candidate.valueParameters.size != 1) return@factory null
 
-            if (!candidate.returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack).isUnit) return@factory null
+            val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
+            if (!candidate.returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack, fakeSource).isUnit) {
+                return@factory null
+            }
 
             val parameterType =
-                candidate.valueParameters.single().returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
+                candidate.valueParameters.single().returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack, fakeSource)
 
             candidateSymbol.takeIf {
                 candidate.isAcceptableAsAccessorOverride() && AbstractTypeChecker.equalTypes(
@@ -360,7 +367,7 @@ class JavaClassUseSiteMemberScope(
         val owner = ownerClassLookupTag.toSymbol(session)?.fir as? FirJavaClass ?: return this
         val continuationParameterType = continuationParameter
             .returnTypeRef
-            .resolveIfJavaType(session, owner.javaTypeParameterStack)
+            .resolveIfJavaType(session, owner.javaTypeParameterStack, source?.fakeElement(KtFakeSourceElementKind.Enhancement))
             .coneTypeSafe<ConeKotlinType>()
             ?.lowerBoundIfFlexible() as? ConeClassLikeType
             ?: return this
@@ -844,7 +851,9 @@ class JavaClassUseSiteMemberScope(
 
     private fun FirTypeRef.probablyJavaTypeRefToConeType(): ConeKotlinType {
         return when (this) {
-            is FirJavaTypeRef -> toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
+            is FirJavaTypeRef -> toConeKotlinTypeProbablyFlexible(
+                session, typeParameterStack, source?.fakeElement(KtFakeSourceElementKind.Enhancement)
+            )
             else -> coneType
         }
     }
@@ -858,7 +867,9 @@ class JavaClassUseSiteMemberScope(
         if (!this.isJavaOrEnhancement) return false
 
         val valueParameter = fir.valueParameters.first()
-        val parameterType = valueParameter.returnTypeRef.toConeKotlinTypeProbablyFlexible(session, typeParameterStack)
+        val parameterType = valueParameter.returnTypeRef.toConeKotlinTypeProbablyFlexible(
+            session, typeParameterStack, valueParameter.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
+        )
         val upperBound = parameterType.upperBoundIfFlexible()
         if (upperBound !is ConeClassLikeType) return false
 
@@ -905,7 +916,8 @@ class JavaClassUseSiteMemberScope(
         return computeJvmDescriptor(customName, includeReturnType) {
             it.toConeKotlinTypeProbablyFlexible(
                 session,
-                typeParameterStack
+                typeParameterStack,
+                source?.fakeElement(KtFakeSourceElementKind.Enhancement),
             )
         }
     }

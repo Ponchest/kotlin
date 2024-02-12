@@ -977,7 +977,7 @@ internal class InapplicableFileTargetImpl(
 internal class RepeatedAnnotationImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KtFirDiagnostic.RepeatedAnnotation
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.RepeatedAnnotation
 
 internal class RepeatedAnnotationWarningImpl(
     firDiagnostic: KtPsiDiagnostic,
