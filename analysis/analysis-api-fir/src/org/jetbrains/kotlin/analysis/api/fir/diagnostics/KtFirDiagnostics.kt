@@ -3998,10 +3998,6 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NonAbstractMemberOfExternalInterface::class
     }
 
-    interface ExternalClassConstructorPropertyParameter : KtFirDiagnostic<KtParameter> {
-        override val diagnosticClass get() = ExternalClassConstructorPropertyParameter::class
-    }
-
     interface ExternalAnonymousInitializer : KtFirDiagnostic<KtAnonymousInitializer> {
         override val diagnosticClass get() = ExternalAnonymousInitializer::class
     }

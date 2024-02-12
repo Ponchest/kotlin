@@ -146,7 +146,6 @@ object JsExternalChecker : DeclarationChecker {
         checkDelegation(declaration, descriptor, trace)
         checkAnonymousInitializer(declaration, trace)
         checkEnumEntry(declaration, trace)
-        checkConstructorPropertyParam(declaration, descriptor, trace)
     }
 
     private fun checkBody(
@@ -210,17 +209,6 @@ object JsExternalChecker : DeclarationChecker {
         declaration.body?.let {
             diagnosticHolder.report(ErrorsJs.EXTERNAL_ENUM_ENTRY_WITH_BODY.on(it))
         }
-    }
-
-    private fun checkConstructorPropertyParam(
-        declaration: KtDeclaration,
-        descriptor: DeclarationDescriptor,
-        diagnosticHolder: DiagnosticSink
-    ) {
-        if (descriptor !is PropertyDescriptor || declaration !is KtParameter) return
-        val containingClass = descriptor.containingDeclaration as ClassDescriptor
-        if (containingClass.isData || DescriptorUtils.isAnnotationClass(containingClass)) return
-        diagnosticHolder.report(ErrorsJs.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER.on(declaration))
     }
 
     private fun isDirectlyExternal(declaration: KtDeclaration, descriptor: DeclarationDescriptor): Boolean {

@@ -4828,11 +4828,6 @@ internal class NonAbstractMemberOfExternalInterfaceImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KtFirDiagnostic.NonAbstractMemberOfExternalInterface
 
-internal class ExternalClassConstructorPropertyParameterImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KtFirDiagnostic.ExternalClassConstructorPropertyParameter
-
 internal class ExternalAnonymousInitializerImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

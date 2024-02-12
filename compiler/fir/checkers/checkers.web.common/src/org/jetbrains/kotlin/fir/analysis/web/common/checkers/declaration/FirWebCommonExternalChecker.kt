@@ -113,7 +113,6 @@ abstract class FirWebCommonExternalChecker : FirBasicDeclarationChecker(MppCheck
         declaration.checkBody(context, reporter)
         declaration.checkDelegation(context, reporter)
         declaration.checkAnonymousInitializer(context, reporter)
-        declaration.checkConstructorPropertyParam(context, reporter)
 
         additionalCheck(declaration, context, reporter)
     }
@@ -197,13 +196,6 @@ abstract class FirWebCommonExternalChecker : FirBasicDeclarationChecker(MppCheck
         for (anonymousInitializer in anonymousInitializers) {
             reporter.reportOn(anonymousInitializer.source, FirWebCommonErrors.EXTERNAL_ANONYMOUS_INITIALIZER, context)
         }
-    }
-
-    private fun FirDeclaration.checkConstructorPropertyParam(context: CheckerContext, reporter: DiagnosticReporter) {
-        if (this !is FirProperty || source?.kind != KtFakeSourceElementKind.PropertyFromParameter) return
-        val containingClass = getContainingClassSymbol(context.session) as? FirClassSymbol<*> ?: return
-        if (containingClass.isData || containingClass.classKind == ClassKind.ANNOTATION_CLASS) return
-        reporter.reportOn(source, FirWebCommonErrors.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, context)
     }
 
     private fun FirDeclaration.isDirectlyExternal(session: FirSession): Boolean {

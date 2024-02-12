@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.psi.KtAnonymousInitializer
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtParameter
 
 /**
  * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.WEB_COMMON_DIAGNOSTICS_LIST]
@@ -32,7 +31,6 @@ object FirWebCommonErrors {
     val NESTED_CLASS_IN_EXTERNAL_INTERFACE: KtDiagnosticFactory0 by error0<KtExpression>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val INLINE_EXTERNAL_DECLARATION: KtDiagnosticFactory0 by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE: KtDiagnosticFactory0 by error0<KtExpression>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
-    val EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER: KtDiagnosticFactory0 by error0<KtParameter>()
     val EXTERNAL_ANONYMOUS_INITIALIZER: KtDiagnosticFactory0 by error0<KtAnonymousInitializer>()
     val EXTERNAL_DELEGATION: KtDiagnosticFactory0 by error0<KtElement>()
     val EXTERNAL_DELEGATED_CONSTRUCTOR_CALL: KtDiagnosticFactory0 by error0<KtElement>()

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.CANNOT_CHECK_FOR_EXTERNAL_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.EXTERNAL_ANONYMOUS_INITIALIZER
-import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.EXTERNAL_DELEGATED_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.EXTERNAL_DELEGATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.EXTERNAL_INTERFACE_AS_CLASS_LITERAL
@@ -41,7 +40,6 @@ object FirWebCommonErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE,
             "Only nullable properties of external interfaces are allowed to be non-abstract."
         )
-        map.put(EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, "External class constructor cannot have a property parameter.")
         map.put(EXTERNAL_ANONYMOUS_INITIALIZER, "Anonymous initializers in external classes are prohibited.")
         map.put(EXTERNAL_DELEGATION, "Cannot use delegate on external declaration.")
         map.put(EXTERNAL_DELEGATED_CONSTRUCTOR_CALL, "Delegated constructor call in external class is prohibited.")
