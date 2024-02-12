@@ -11,3 +11,7 @@ external interface I {
 
     companion object
 }
+
+external interface I2 {
+    companion <!NAMED_COMPANION_IN_EXTERNAL_INTERFACE!>object Named<!>
+}

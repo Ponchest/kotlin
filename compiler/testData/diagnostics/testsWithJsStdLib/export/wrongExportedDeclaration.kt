@@ -31,6 +31,13 @@ interface InterfaceWithCompanion {
 }
 
 @JsExport
+interface InterfaceWithNamedCompanion {
+    companion <!NAMED_COMPANION_IN_EXPORTED_INTERFACE!>object Named<!> {
+        fun foo() = 42
+    }
+}
+
+@JsExport
 interface OuterInterface {
     class <!WRONG_EXPORTED_DECLARATION("nested class inside exported interface")!>Nested<!>
 }
