@@ -72,18 +72,13 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Imple
     }
 
     private fun generateDefaultImplementations(elements: List<Element>) {
-        collectLeafsWithoutImplementation(elements).forEach {
-            impl(it)
-        }
-    }
-
-    private fun collectLeafsWithoutImplementation(elements: List<Element>): Set<Element> {
-        val leafs = elements.toMutableSet()
-        elements.forEach { element ->
-            leafs.removeAll(element.elementParents.map { it.element }.toSet())
-        }
-        leafs.removeAll(elementsWithImpl)
-        return leafs
+        elements
+            .filter { it.isLeafElement }
+            .filterNot { it in elementsWithImpl }
+            .filterNot { it.doesNotNeedImplementation }
+            .forEach {
+                impl(it)
+            }
     }
 
     /**

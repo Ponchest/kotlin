@@ -41,6 +41,8 @@ abstract class AbstractElement<Element, Field, Implementation>(
 
     val isRootElement: Boolean
         get() = elementParents.isEmpty()
+    
+    var isLeafElement: Boolean = false
 
     var isSealed: Boolean = false
 
@@ -160,15 +162,12 @@ abstract class AbstractElement<Element, Field, Implementation>(
 
     var doesNotNeedImplementation: Boolean = false
 
-    val allImplementations: List<Implementation> by lazy {
-        if (doesNotNeedImplementation) {
-            emptyList()
-        } else {
+    val allImplementations: List<Implementation>
+        get() {
             val implementations = customImplementations.toMutableList()
             defaultImplementation?.let { implementations += it }
-            implementations
+            return implementations
         }
-    }
 
     /**
      * Types/functions that you want to additionally import in the file with the element class.
