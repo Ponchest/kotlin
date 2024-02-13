@@ -5,7 +5,7 @@ The Gradle and Maven plugins are located in the `libraries/tools` directory.
 
 > :warning: **The `js-plain-objects` compiler plugin only works with the K2 compiler.**
 
-## Plugin Overview
+## Plugin overview
 
 The plugin helps to create type-safe plain JavaScript objects. To introduce a type of object, the user should describe it with an `external interface` annotated with `JsPlainObject`.
 Example:
