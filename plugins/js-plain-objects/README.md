@@ -7,8 +7,8 @@ The Gradle and Maven plugins are located in the `libraries/tools` directory.
 
 ## Plugin overview
 
-The plugin helps to create type-safe plain JavaScript objects. To introduce a type of object, the user should describe it with an `external interface` annotated with `JsPlainObject`.
-Example:
+The `js-plain-objects` plugin helps you to create type-safe plain JavaScript objects. To create a plain JavaScript object, declare an [external interface](https://kotlinlang.org/docs/wasm-js-interop.html#external-interfaces) and annotate it with `@JsPlainObject`.
+For example:
 ```kotlin
 @JsPlainObject
 external interface User {
