@@ -72,7 +72,7 @@ The plugin consists of the following parts:
 3. `cli` — extension points that allow the plugin to be loaded with `-Xplugin` Kotlin CLI compiler argument.
 4. `common` — common declarations for other parts.
 
-Tests and test data are common for all parts and located directly in this module (see `testData` and `tests-gen` folders).
+Tests and test data are common for all parts and located directly in this module. (See `testData` and `tests-gen` folders).
 
 ## Building and contributing
 
