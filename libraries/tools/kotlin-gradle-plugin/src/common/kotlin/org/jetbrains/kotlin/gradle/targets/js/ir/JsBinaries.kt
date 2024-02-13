@@ -194,10 +194,8 @@ open class ExecutableWasm(
             it.destinationDirectory
         }
 
-        val compiledWasmFile = linkTask.flatMap { link ->
-            link.destinationDirectory.zip(link.compilerOptions.moduleName) { destinationDir, moduleName ->
-                destinationDir.asFile.resolve("$moduleName.wasm")
-            }
+        val compiledWasmFile = linkTask.map { link ->
+            link.destinationDirectory.asFile.get().resolve(link.compilerOptions.moduleName.get() + ".wasm")
         }
 
         dependsOn(linkTask)
