@@ -1,7 +1,7 @@
 # JavaScript Plain Objects compiler plugin
 
 This folder contains the runtime and the compiler plugin of the JavaScript Plain Objects plugin.
-Gradle and Maven plugins are in the `libraries/tools` directory.
+The Gradle and Maven plugins are located in the `libraries/tools` directory.
 
 > :warning: **It works only with K2 compiler**
 
