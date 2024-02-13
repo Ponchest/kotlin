@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
@@ -29,7 +27,6 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.mapToFile
-import java.io.File
 
 interface JsBinary {
     val compilation: KotlinJsCompilation
@@ -223,7 +220,11 @@ open class ExecutableWasm(
             fs.copy {
                 it.from(compileWasmDestDir)
                 it.into(outputDirectory)
-                it.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+                it.eachFile {
+                    if (it.relativePath.getFile(outputDirectory.get().asFile).exists()) {
+                        it.exclude()
+                    }
+                }
             }
         }
     }
