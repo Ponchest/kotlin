@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
@@ -23,7 +26,6 @@ import org.jetbrains.kotlin.gradle.targets.js.subtargets.createDefaultDistributi
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinJsIrLinkConfig
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.mapToFile
@@ -190,45 +192,38 @@ open class ExecutableWasm(
 ) {
     val optimizeTaskName: String = optimizeTaskName()
 
-    val optimizeTask: TaskProvider<BinaryenExec> = run {
-        val linkTask = linkTask
-
+    val optimizeTask: TaskProvider<BinaryenExec> = BinaryenExec.create(compilation, optimizeTaskName) {
         val compileWasmDestDir = linkTask.map {
             it.destinationDirectory
         }
 
-        val compiledWasmFile = linkTask.map { link ->
-            link.destinationDirectory.asFile.get().resolve(link.compilerOptions.moduleName.get() + ".wasm")
+        val compiledWasmFile = linkTask.flatMap { link ->
+            link.destinationDirectory.zip(link.compilerOptions.moduleName) { destinationDir, moduleName ->
+                destinationDir.asFile.resolve("$moduleName.wasm")
+            }
         }
 
-        BinaryenExec.create(compilation, optimizeTaskName) {
-            dependsOn(linkTask)
-            inputFileProperty.fileProvider(compiledWasmFile)
+        dependsOn(linkTask)
+        inputFileProperty.fileProvider(compiledWasmFile)
 
-            val outputDirectory: Provider<File> = target.project.layout.buildDirectory
-                .dir(COMPILE_SYNC)
-                .map { it.dir(compilation.target.targetName) }
-                .map { it.dir(compilation.name) }
-                .map { it.dir(name) }
-                .map { it.dir("optimized") }
-                .map { it.asFile }
+        val outputDirectory: Provider<Directory> = target.project.layout.buildDirectory
+            .dir(COMPILE_SYNC)
+            .map { it.dir(compilation.target.targetName) }
+            .map { it.dir(compilation.name) }
+            .map { it.dir(name) }
+            .map { it.dir("optimized") }
 
-            val outputFile = outputDirectory.map { it.resolve(compiledWasmFile.get().name) }
+        this.outputDirectory.set(outputDirectory)
 
-            outputFileProperty.fileProvider(
-                outputFile
-            )
+        outputFileName.set(
+            compiledWasmFile.get().name
+        )
 
-            doLast {
-                fs.copy {
-                    it.from(compileWasmDestDir)
-                    it.into(outputDirectory)
-                    it.eachFile {
-                        if (it.relativePath.getFile(outputDirectory.get()).exists()) {
-                            it.exclude()
-                        }
-                    }
-                }
+        doLast {
+            fs.copy {
+                it.from(compileWasmDestDir)
+                it.into(outputDirectory)
+                it.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
             }
         }
     }
