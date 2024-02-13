@@ -18,7 +18,7 @@ external interface User {
 }
 ```
 
-The plugin will add a few extra declarations to create and copy the object with such a structure easily:
+The plugin adds a few extra declarations to create and copy the object with such a structure easily:
 ```kotlin
 @JsPlainObject
 external interface User {
