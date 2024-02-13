@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.expression]
  */
 abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement, IrAttributeContainer {
-    override var attributeOwnerId: IrAttributeContainer = this
+    abstract override var attributeOwnerId: IrAttributeContainer
 
-    override var originalBeforeInline: IrAttributeContainer? = null
+    abstract override var originalBeforeInline: IrAttributeContainer?
 
     abstract var type: IrType
 
