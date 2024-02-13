@@ -93,7 +93,7 @@ Tests are located in the `test-gen` folder and can be run using the green arrow 
 `./gradlew :plugins:js-plain-objects:compiler-plugin:test` task.
 To add a new test, add an appropriate file to the `testData` folder and then re-generate tests with `./gradlew :plugins:js-plain-objects:compiler-plugin:generateTests`.
 
-### Contributing
+### Contribute
 
 Follow the common [Kotlin's contribution guidelines](../../docs/contributing.md).
 In general, create an issue in [Kotlin's YouTrack](https://youtrack.jetbrains.com/issues/KT). 
