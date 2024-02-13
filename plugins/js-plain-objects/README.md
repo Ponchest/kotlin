@@ -82,7 +82,7 @@ Before you begin, it is recommended to read the root `README.md` file and ensure
 
 > Note: Yyou don't need JDK6 installed to work with this plugin.
 
-### Installing locally
+### Install locally
 
 Run `./gradlew dist install` to get a fresh Kotlin compiler and js-plain-objects plugin in your Maven local with `2.x.255-SNAPSHOT` versions.
 
