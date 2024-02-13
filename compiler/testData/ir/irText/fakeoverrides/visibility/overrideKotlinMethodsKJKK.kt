@@ -1,6 +1,6 @@
-// ISSUE: KT-61360
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_K1: ANY
+
 // FILE: J.java
 public class J extends B {}
 

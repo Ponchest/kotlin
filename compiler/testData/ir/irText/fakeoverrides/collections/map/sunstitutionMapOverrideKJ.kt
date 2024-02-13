@@ -9,9 +9,6 @@ import java.util.SortedMap
 abstract class C<T> : SortedMap<T, T>
 
 abstract class D<T>(
-    override val entries: MutableSet<MutableMap.MutableEntry<T, T>>,
-    override val keys: MutableSet<T>,
-    override val values: MutableCollection<T>,
     override val size: Int
 ) : SortedMap<T, T> {
     override fun remove(key: T): T? {

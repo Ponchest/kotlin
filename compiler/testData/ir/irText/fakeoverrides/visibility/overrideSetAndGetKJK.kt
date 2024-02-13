@@ -1,5 +1,5 @@
-// ISSUE: KT-61360
 // TARGET_BACKEND: JVM
+
 // FILE: J.java
 public class J extends A {
     @Override public int getA1() { return 1; }
