@@ -89,7 +89,7 @@ Run `./gradlew dist install` to get a fresh version of the Kotlin compiler and t
 ### Work with tests
 
 Like most Kotlin project modules, tests are generated based on test data.
-Tests are located in the `test-gen` folder and can be run using the green arrow on the IDE gutter or with standard
+Tests are located in the `test-gen` folder and can be run using the green arrow in the IDE gutter or with the standard
 `./gradlew :plugins:js-plain-objects:compiler-plugin:test` task.
 To add a new test, add an appropriate file to the `testData` folder and then re-generate tests with `./gradlew :plugins:js-plain-objects:compiler-plugin:generateTests`.
 
