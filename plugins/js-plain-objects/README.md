@@ -78,7 +78,9 @@ Tests and test data are common for all parts and located directly in this module
 
 ### Prerequisites
 
-Before all, it is recommended to read root `README.md` and ensure you have all the necessary things installed (you don't need JDK6 to work with this plugin).
+Before you begin, it is recommended to read the root `README.md` file and ensure that you have all the necessary tools installed.
+
+> Note: Yyou don't need JDK6 installed to work with this plugin.
 
 ### Installing locally
 
