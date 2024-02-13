@@ -61,7 +61,7 @@ function main() {
 }
 ```
 
-Any JavaScript objects created with this approach are safer because you will have a compile-time error if you use the wrong property name or its value type.
+Any JavaScript objects created with this approach are safer because you will have a compile-time error if you use the wrong property name or value type.
 
 ## Project structure overview
 
