@@ -35,7 +35,7 @@ inline fun User.copy(name: String = NOTHING, age: Int = NOTHING, email: String? 
     js("Object.assign({}, this, { name: name, age: age, email: email })")
 ```
 
-So, to create an object with the defined structure, the user should call `User` as a constructor:
+To create an object with the defined structure, call `User` as a constructor:
 ```kotlin
 fun main() {
     val user = User(name = "Name", age = 10)
