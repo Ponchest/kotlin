@@ -86,7 +86,7 @@ Before you begin, it is recommended to read the root `README.md` file and ensure
 
 Run `./gradlew dist install` to get a fresh Kotlin compiler and js-plain-objects plugin in your Maven local with `2.x.255-SNAPSHOT` versions.
 
-### Working with tests
+### Work with tests
 
 Like most Kotlin project modules, tests are generated based on test data.
 Tests are located in the `test-gen` folder and can be run using the green arrow on the IDE gutter or with standard
