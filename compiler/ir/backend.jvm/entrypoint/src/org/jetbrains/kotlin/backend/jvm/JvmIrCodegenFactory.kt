@@ -124,7 +124,7 @@ open class JvmIrCodegenFactory(
         val extensions: JvmGeneratorExtensions,
         val backendExtension: JvmBackendExtension,
         val pluginContext: IrPluginContext?,
-        val notifyCodegenStart: () -> Unit
+        val notifyCodegenStart: () -> Unit,
     ) : CodegenFactory.BackendInput
 
     private data class JvmIrCodegenInput(
@@ -313,11 +313,11 @@ open class JvmIrCodegenFactory(
 
         val moduleChunk = sourceFiles.toSet()
         val wholeModule = wholeBackendInput.irModuleFragment
-        return wholeBackendInput.copy(
-            IrModuleFragmentImpl(wholeModule.descriptor, wholeModule.irBuiltins, wholeModule.files.filter { file ->
-                file.getKtFile() in moduleChunk
-            })
-        )
+        val moduleCopy = IrModuleFragmentImpl(wholeModule.descriptor, wholeModule.irBuiltins)
+        moduleCopy.files += wholeModule.files.filter { file ->
+            file.getKtFile() in moduleChunk
+        }
+        return wholeBackendInput.copy(moduleCopy)
     }
 
     override fun invokeLowerings(state: GenerationState, input: CodegenFactory.BackendInput): CodegenFactory.CodegenInput {
@@ -380,7 +380,7 @@ open class JvmIrCodegenFactory(
         extensions: JvmGeneratorExtensions,
         backendExtension: JvmBackendExtension,
         irPluginContext: IrPluginContext,
-        notifyCodegenStart: () -> Unit = {}
+        notifyCodegenStart: () -> Unit = {},
     ) {
         generateModule(
             state,
