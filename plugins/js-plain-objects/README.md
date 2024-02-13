@@ -95,5 +95,5 @@ To add a new test, add an appropriate file to the `testData` folder and then re-
 
 ### Contribute
 
-Follow the common [Kotlin's contribution guidelines](../../docs/contributing.md).
+Follow [Kotlin's contribution guidelines](../../docs/contributing.md).
 In general, create an issue in [Kotlin's YouTrack](https://youtrack.jetbrains.com/issues/KT). 
