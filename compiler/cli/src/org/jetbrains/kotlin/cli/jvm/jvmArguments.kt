@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -70,7 +70,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         } else {
             messageCollector.report(
                 ERROR, "Unknown JVM target version: $jvmTargetValue\n" +
-                        "Supported versions: ${JvmTarget.values().joinToString { it.description }}"
+                        "Supported versions: ${JvmTarget.entries.joinToString { it.description }}"
             )
         }
     }
@@ -91,7 +91,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         } else {
             messageCollector.report(
                 ERROR, "Unknown `-Xstring-concat` mode: $stringConcat\n" +
-                        "Supported modes: ${JvmStringConcat.values().joinToString { it.description }}"
+                        "Supported modes: ${JvmStringConcat.entries.joinToString { it.description }}"
             )
         }
     }
@@ -116,7 +116,7 @@ private fun CompilerConfiguration.handleClosureGenerationSchemeArgument(
         messageCollector.report(
             ERROR,
             "Unknown `$flag` argument: ${value}\n." +
-                    "Supported arguments: ${JvmClosureGenerationScheme.values().joinToString { it.description }}"
+                    "Supported arguments: ${JvmClosureGenerationScheme.entries.joinToString { it.description }}"
         )
     }
 }
@@ -250,7 +250,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
         if (abiStability == null) {
             messageCollector.report(
                 ERROR,
-                "Unknown ABI stability mode: ${arguments.abiStability}, supported modes: ${JvmAbiStability.values().map { it.description }}"
+                "Unknown ABI stability mode: ${arguments.abiStability}, supported modes: ${JvmAbiStability.entries.map { it.description }}"
             )
         } else if (!useIR && abiStability == JvmAbiStability.UNSTABLE) {
             messageCollector.report(ERROR, "-Xabi-stability=unstable is not supported in the old JVM backend")
@@ -288,7 +288,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     if (assertionsMode == null) {
         messageCollector.report(
             ERROR,
-            "Unknown assertions mode: ${arguments.assertionsMode}, supported modes: ${JVMAssertionsMode.values().map { it.description }}"
+            "Unknown assertions mode: ${arguments.assertionsMode}, supported modes: ${JVMAssertionsMode.entries.map { it.description }}"
         )
     }
     put(JVMConfigurationKeys.ASSERTIONS_MODE, assertionsMode ?: JVMAssertionsMode.DEFAULT)
