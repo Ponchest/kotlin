@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -97,10 +98,18 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
             checkClassCannotBeExtendedDirectly(symbol, reporter, superTypeRef, context)
             checkNamedFunctionTypeParameter(superTypeRef, context, reporter)
 
-            if (coneType.typeArguments.isNotEmpty()) {
+            val isProjectionInImmediateArgumentReported = if (coneType.typeArguments.isNotEmpty()) {
                 checkProjectionInImmediateArgumentToSupertype(coneType, superTypeRef, reporter, context)
             } else {
                 checkExpandedTypeCannotBeInherited(symbol, fullyExpandedType, reporter, superTypeRef, coneType, context)
+                false
+            }
+
+            if (!isProjectionInImmediateArgumentReported &&
+                coneType.toSymbol(context.session) is FirTypeAliasSymbol &&
+                fullyExpandedType.typeArguments.any { it.isConflictingOrNotInvariant }
+            ) {
+                reporter.reportOn(superTypeRef.source, FirErrors.CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION, context)
             }
         }
 
@@ -140,8 +149,9 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
         superTypeRef: FirTypeRef,
         reporter: DiagnosticReporter,
         context: CheckerContext,
-    ) {
-        val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(superTypeRef) ?: return
+    ): Boolean {
+        val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(superTypeRef) ?: return false
+        var result = false
         for ((index, typeArgument) in coneType.typeArguments.withIndex()) {
             if (typeArgument.isConflictingOrNotInvariant) {
                 val (_, argSource) = typeRefAndSourcesForArguments.getOrNull(index) ?: continue
@@ -150,8 +160,10 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
                     FirErrors.PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE,
                     context
                 )
+                result = true
             }
         }
+        return result
     }
 
     private fun checkExpandedTypeCannotBeInherited(
