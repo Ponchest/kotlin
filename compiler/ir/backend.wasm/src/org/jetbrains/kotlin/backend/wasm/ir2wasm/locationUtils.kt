@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.ir.LineAndColumn
 import org.jetbrains.kotlin.wasm.ir.WasmExpressionBuilder
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
+private val IrElement.hasSyntheticOrUndefinedLocation: Boolean
+    get() = startOffset < 0 && endOffset < 0
+
 enum class LocationType {
     START {
         override fun getLineAndColumnNumberFor(irElement: IrElement, fileEntry: IrFileEntry) =
@@ -26,6 +29,7 @@ enum class LocationType {
 
 fun IrElement.getSourceLocation(fileEntry: IrFileEntry?, type: LocationType = LocationType.START): SourceLocation {
     if (fileEntry == null) return SourceLocation.NoLocation("fileEntry is null")
+    if (hasSyntheticOrUndefinedLocation) return SourceLocation.NoLocation("Synthetic declaration")
 
     val path = fileEntry.name
     val (line, column) = type.getLineAndColumnNumberFor(this, fileEntry)
