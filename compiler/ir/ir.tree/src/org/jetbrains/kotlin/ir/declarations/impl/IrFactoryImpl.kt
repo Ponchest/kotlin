@@ -33,7 +33,11 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         symbol: IrAnonymousInitializerSymbol,
         isStatic: Boolean,
     ): IrAnonymousInitializer =
-        IrAnonymousInitializerImpl(startOffset, endOffset, origin, symbol, isStatic, factory = this)
+        IrAnonymousInitializerImpl(
+            startOffset = startOffset, endOffset = endOffset,
+            origin = origin, symbol = symbol, isStatic = isStatic,
+            factory = this
+        )
 
     override fun createClass(
         startOffset: Int,
@@ -55,8 +59,9 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         source: SourceElement,
     ): IrClass =
         IrClassImpl(
-            startOffset, endOffset, origin, symbol, name, kind, visibility, modality, source,
-            factory = this
+            startOffset = startOffset, endOffset = endOffset,
+            origin = origin, symbol = symbol, name = name, kind = kind, visibility = visibility, modality = modality,
+            source = source, factory = this
         ).apply {
             this.isCompanion = isCompanion
             this.isInner = isInner
@@ -83,8 +88,10 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         containerSource: DeserializedContainerSource?,
     ): IrConstructor =
         IrConstructorImpl(
-            startOffset, endOffset, origin, symbol, name, visibility, returnType, isInline, isExternal, isPrimary, isExpect,
-            containerSource, factory = this
+            startOffset = startOffset, endOffset = endOffset,
+            origin = origin, symbol = symbol, name = name, visibility = visibility, returnType = returnType,
+            isInline = isInline, isExternal = isExternal, isPrimary = isPrimary, isExpect = isExpect,
+            containerSource = containerSource, factory = this
         )
 
     override fun createEnumEntry(
@@ -94,14 +101,14 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         name: Name,
         symbol: IrEnumEntrySymbol,
     ): IrEnumEntry =
-        IrEnumEntryImpl(startOffset, endOffset, origin, symbol, name, factory = this)
+        IrEnumEntryImpl(startOffset = startOffset, endOffset = endOffset, origin = origin, symbol = symbol, name = name, factory = this)
 
     override fun createErrorDeclaration(
         startOffset: Int,
         endOffset: Int,
         descriptor: DeclarationDescriptor?,
     ): IrErrorDeclaration =
-        IrErrorDeclarationImpl(startOffset, endOffset, descriptor, factory = this)
+        IrErrorDeclarationImpl(startOffset = startOffset, endOffset = endOffset, _descriptor = descriptor, factory = this)
 
     override fun createField(
         startOffset: Int,
@@ -115,7 +122,12 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         isStatic: Boolean,
         isExternal: Boolean,
     ): IrField =
-        IrFieldImpl(startOffset, endOffset, origin, symbol, name, type, visibility, isFinal, isExternal, isStatic, factory = this)
+        IrFieldImpl(
+            startOffset = startOffset, endOffset = endOffset,
+            origin = origin, symbol = symbol, name = name, type = type, visibility = visibility,
+            isFinal = isFinal, isExternal = isExternal, isStatic = isStatic,
+            factory = this
+        )
 
     override fun createSimpleFunction(
         startOffset: Int,
@@ -137,9 +149,11 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         isFakeOverride: Boolean,
     ): IrSimpleFunction =
         IrFunctionImpl(
-            startOffset, endOffset, origin, symbol, name, visibility, modality, returnType,
-            isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect, isFakeOverride,
-            containerSource, factory = this
+            startOffset = startOffset, endOffset = endOffset,
+            origin = origin, symbol = symbol, name = name, visibility = visibility, modality = modality, returnType = returnType,
+            isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend,
+            isOperator = isOperator, isInfix = isInfix, isExpect = isExpect, isFakeOverride = isFakeOverride,
+            containerSource = containerSource, factory = this
         )
 
     override fun createFunctionWithLateBinding(
@@ -160,21 +174,10 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         isFakeOverride: Boolean,
     ): IrFunctionWithLateBinding =
         IrFunctionWithLateBindingImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
-            origin = origin,
-            name = name,
-            visibility = visibility,
-            modality = modality,
-            returnType = returnType,
-            isInline = isInline,
-            isExternal = isExternal,
-            isTailrec = isTailrec,
-            isSuspend = isSuspend,
-            isOperator = isOperator,
-            isInfix = isInfix,
-            isExpect = isExpect,
-            isFakeOverride = isFakeOverride,
+            startOffset = startOffset, endOffset = endOffset,
+            origin = origin, name = name, visibility = visibility, modality = modality, returnType = returnType,
+            isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend,
+            isOperator = isOperator, isInfix = isInfix, isExpect = isExpect, isFakeOverride = isFakeOverride,
             factory = this
         )
 
@@ -187,7 +190,11 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         type: IrType,
         isVar: Boolean,
     ): IrLocalDelegatedProperty =
-        IrLocalDelegatedPropertyImpl(startOffset, endOffset, origin, symbol, name, type, isVar, factory = this)
+        IrLocalDelegatedPropertyImpl(
+            startOffset = startOffset, endOffset = endOffset,
+            origin = origin, symbol = symbol, name = name, type = type,
+            isVar = isVar, factory = this
+        )
 
     override fun createProperty(
         startOffset: Int,
@@ -207,9 +214,11 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         isFakeOverride: Boolean,
     ): IrProperty =
         IrPropertyImpl(
-            startOffset, endOffset, origin, symbol, name, visibility, modality,
-            isVar, isConst, isLateinit, isDelegated, isExternal, isExpect, isFakeOverride,
-            containerSource, factory = this
+            startOffset = startOffset, endOffset = endOffset,
+            origin = origin, symbol = symbol, name = name, visibility = visibility, modality = modality,
+            isVar = isVar, isConst = isConst, isLateinit = isLateinit, isDelegated = isDelegated,
+            isExternal = isExternal, isExpect = isExpect, isFakeOverride = isFakeOverride,
+            containerSource = containerSource, factory = this
         )
 
     override fun createPropertyWithLateBinding(
@@ -228,19 +237,10 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         isFakeOverride: Boolean,
     ): IrPropertyWithLateBinding =
         IrPropertyWithLateBindingImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
-            origin = origin,
-            name = name,
-            visibility = visibility,
-            modality = modality,
-            isVar = isVar,
-            isConst = isConst,
-            isLateinit = isLateinit,
-            isDelegated = isDelegated,
-            isExternal = isExternal,
-            isExpect = isExpect,
-            isFakeOverride = isFakeOverride,
+            startOffset = startOffset, endOffset = endOffset,
+            origin = origin, name = name, visibility = visibility, modality = modality,
+            isVar = isVar, isConst = isConst, isLateinit = isLateinit, isDelegated = isDelegated,
+            isExternal = isExternal, isExpect = isExpect, isFakeOverride = isFakeOverride,
             factory = this
         )
 
@@ -254,7 +254,12 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         isActual: Boolean,
         expandedType: IrType,
     ): IrTypeAlias =
-        IrTypeAliasImpl(startOffset, endOffset, symbol, name, visibility, expandedType, isActual, origin, factory = this)
+        IrTypeAliasImpl(
+            startOffset = startOffset, endOffset = endOffset,
+            symbol = symbol, name = name, visibility = visibility,
+            expandedType = expandedType, isActual = isActual, origin = origin,
+            factory = this
+        )
 
     override fun createTypeParameter(
         startOffset: Int,
@@ -266,7 +271,12 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         index: Int,
         isReified: Boolean,
     ): IrTypeParameter =
-        IrTypeParameterImpl(startOffset, endOffset, origin, symbol, name, index, isReified, variance, factory = this)
+        IrTypeParameterImpl(
+            startOffset = startOffset, endOffset = endOffset,
+            origin = origin, symbol = symbol, name = name,
+            index = index, isReified = isReified, variance = variance,
+            factory = this
+        )
 
     override fun createValueParameter(
         startOffset: Int,
@@ -283,8 +293,10 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         isHidden: Boolean,
     ): IrValueParameter =
         IrValueParameterImpl(
-            startOffset, endOffset, origin, symbol, name, index, type, varargElementType,
-            isCrossinline, isNoinline, isHidden, isAssignable, factory = this
+            startOffset = startOffset, endOffset = endOffset,
+            origin = origin, symbol = symbol, name = name, index = index, type = type, varargElementType = varargElementType,
+            isCrossinline = isCrossinline, isNoinline = isNoinline, isHidden = isHidden, isAssignable = isAssignable,
+            factory = this
         )
 
     override fun createExpressionBody(
@@ -292,11 +304,11 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         endOffset: Int,
         expression: IrExpression,
     ): IrExpressionBody =
-        IrExpressionBodyImpl(startOffset, endOffset, expression)
+        IrExpressionBodyImpl(startOffset = startOffset, endOffset = endOffset, expression = expression)
 
     override fun createBlockBody(
         startOffset: Int,
         endOffset: Int,
     ): IrBlockBody =
-        IrBlockBodyImpl(startOffset, endOffset)
+        IrBlockBodyImpl(startOffset = startOffset, endOffset = endOffset)
 }
