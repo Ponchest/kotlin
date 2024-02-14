@@ -3816,6 +3816,16 @@ internal class TypealiasShouldExpandToClassImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.TypealiasShouldExpandToClass
 
+internal class ConstructorOrSupertypeOnTypealiasWithTypeProjectionErrorImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.ConstructorOrSupertypeOnTypealiasWithTypeProjectionError
+
+internal class ConstructorOrSupertypeOnTypealiasWithTypeProjectionWarningImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.ConstructorOrSupertypeOnTypealiasWithTypeProjectionWarning
+
 internal class RedundantVisibilityModifierImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
