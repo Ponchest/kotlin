@@ -75,7 +75,7 @@ fun my2(my: MyList) {}
 fun my3(my: <!OPT_IN_USAGE_ERROR!>YourList<!>) {}
 
 fun main() {
-    val x = <!OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR!>listOf<!>(A(), B())
+    val x = <!OPT_IN_USAGE_ERROR!>listOf<!>(A(), B())
     val y = MyList()
     val b = <!OPT_IN_USAGE_ERROR!>AList<!>()
     val z = <!OPT_IN_USAGE_ERROR!>YourList<!>()

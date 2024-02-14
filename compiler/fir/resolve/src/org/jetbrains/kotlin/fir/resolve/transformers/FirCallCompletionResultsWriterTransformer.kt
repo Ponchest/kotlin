@@ -699,7 +699,8 @@ class FirCallCompletionResultsWriterTransformer(
         val typeArguments = computeTypeArgumentTypes(candidate)
             .mapIndexed { index, type ->
                 val argument = access.typeArguments.getOrNull(index)
-                val sourceForTypeArgument = argument?.source ?: access.calleeReference.source
+                val sourceForTypeArgument = argument?.source
+                    ?: access.calleeReference.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeArgument)
                 when (argument) {
                     is FirTypeProjectionWithVariance -> {
                         val typeRef = argument.typeRef as FirResolvedTypeRef
