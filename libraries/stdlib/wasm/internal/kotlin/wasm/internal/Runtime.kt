@@ -63,11 +63,15 @@ internal fun nullableDoubleIeee754Equals(lhs: Double?, rhs: Double?): Boolean {
     return wasm_f64_eq(lhs, rhs)
 }
 
-private val TRUE: Any = boxBoolean(true)
-private val FALSE: Any = boxBoolean(false)
+private var TRUE: Any? = null
+private var FALSE: Any? = null
 
 internal fun getBoxedBoolean(x: Boolean): Any =
-    if (x) TRUE else FALSE
+    if (x) {
+        TRUE ?: boxBoolean(true).also { TRUE = it }
+    } else {
+        FALSE ?: boxBoolean(false).also { FALSE = it }
+    }
 
 @ExcludedFromCodegen
 internal fun boxBoolean(x: Boolean): Any =
