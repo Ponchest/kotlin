@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
+import org.jetbrains.kotlin.gradle.utils.withType
 
 abstract class KotlinJsIrSubTarget(
     val target: KotlinJsIrTarget,
@@ -57,11 +58,11 @@ abstract class KotlinJsIrSubTarget(
         target.compilations.all {
             val npmProject = it.npmProject
             it.compilerOptions.options.freeCompilerArgs.add("$PER_MODULE_OUTPUT_NAME=${npmProject.name}")
-            it.binaries.all { binary ->
-                if (binary is ExecutableWasm) {
+            it.binaries
+                .withType<ExecutableWasm>()
+                .configureEach { binary ->
                     configureBinaryen(binary)
                 }
-            }
         }
     }
 

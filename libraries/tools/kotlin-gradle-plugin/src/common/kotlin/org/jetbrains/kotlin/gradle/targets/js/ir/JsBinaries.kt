@@ -194,12 +194,14 @@ open class ExecutableWasm(
             it.destinationDirectory
         }
 
-        val compiledWasmFile = linkTask.map { link ->
-            link.destinationDirectory.asFile.get().resolve(link.compilerOptions.moduleName.get() + ".wasm")
+        val compiledWasmFile = linkTask.flatMap { link ->
+            link.destinationDirectory.locationOnly.zip(link.compilerOptions.moduleName) { destDir, moduleName ->
+                destDir.file("$moduleName.wasm")
+            }
         }
 
         dependsOn(linkTask)
-        inputFileProperty.fileProvider(compiledWasmFile)
+        inputFileProperty.set(compiledWasmFile)
 
         val outputDirectory: Provider<Directory> = target.project.layout.buildDirectory
             .dir(COMPILE_SYNC)
@@ -211,7 +213,7 @@ open class ExecutableWasm(
         this.outputDirectory.set(outputDirectory)
 
         outputFileName.set(
-            compiledWasmFile.get().name
+            compiledWasmFile.map { it.asFile.name }
         )
 
         doLast {
