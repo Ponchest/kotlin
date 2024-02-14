@@ -48,7 +48,7 @@ fun main() {
 }
 ```
 
-The Kotlin code above will be compiled in the next JavaScript code:
+The Kotlin code will be compiled into the following JavaScript code:
 ```javascript
 function main() {
     var user = { name: "Name", age: 10 };
