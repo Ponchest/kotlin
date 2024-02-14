@@ -71,6 +71,8 @@ class FieldWithDefault(override val origin: Field) : Field(), AbstractFieldWithD
     override var withReplace: Boolean
         get() = origin.withReplace
         set(_) {}
+    override val isChild: Boolean
+        get() = origin.isChild
     override val containsElement: Boolean
         get() = origin.containsElement
     override var needsSeparateTransform: Boolean
@@ -127,7 +129,6 @@ class FieldWithDefault(override val origin: Field) : Field(), AbstractFieldWithD
             it.isMutable = isMutable
             it.withGetter = withGetter
             it.fromDelegate = fromDelegate
-            it.isChild = isChild
         }
     }
 }
@@ -136,6 +137,7 @@ class SimpleField(
     override val name: String,
     override val typeRef: TypeRefWithNullability,
     override var withReplace: Boolean,
+    override val isChild: Boolean,
     override var isVolatile: Boolean = false,
     override var isFinal: Boolean = false,
     override var isLateinit: Boolean = false,
@@ -148,6 +150,7 @@ class SimpleField(
             name = name,
             typeRef = typeRef,
             withReplace = withReplace,
+            isChild = isChild,
             isVolatile = isVolatile,
             isFinal = isFinal,
             isLateinit = isLateinit,
@@ -160,6 +163,7 @@ class SimpleField(
     override fun replaceType(newType: TypeRefWithNullability) = SimpleField(
         name = name,
         typeRef = newType,
+        isChild = isChild,
         withReplace = withReplace,
         isVolatile = isVolatile,
         isFinal = isFinal,
@@ -175,6 +179,7 @@ class FirField(
     override val name: String,
     val element: ElementRef,
     override var withReplace: Boolean,
+    override val isChild: Boolean,
 ) : Field() {
 
     override val typeRef: ElementRef
@@ -190,7 +195,8 @@ class FirField(
         return FirField(
             name,
             element,
-            withReplace
+            withReplace,
+            isChild,
         ).apply {
             withBindThis = this@FirField.withBindThis
         }
@@ -203,7 +209,8 @@ class FieldList(
     override val name: String,
     override val baseType: TypeRef,
     override var withReplace: Boolean,
-    useMutableOrEmpty: Boolean = false
+    override val isChild: Boolean,
+    useMutableOrEmpty: Boolean = false,
 ) : Field(), ListField {
     override var defaultValueInImplementation: String? = null
 
@@ -225,6 +232,7 @@ class FieldList(
             name,
             baseType,
             withReplace,
+            isChild,
             isMutableOrEmptyList
         )
     }
