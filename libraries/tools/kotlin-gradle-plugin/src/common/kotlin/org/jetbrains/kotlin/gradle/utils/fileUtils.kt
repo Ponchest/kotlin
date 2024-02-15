@@ -149,10 +149,10 @@ internal val Project.localProperties: Provider<Map<String, String>>
  */
 internal fun FileCollection.exclude(excludes: FileCollection?): FileCollection = if (excludes != null) minus(excludes) else this
 
-internal fun Project.fileCollectionFromConfigurableFileTree(fileTree: ConfigurableFileTree) {
+internal fun Project.fileCollectionFromConfigurableFileTree(fileTree: ConfigurableFileTree): ConfigurableFileCollection {
     // It is important to pass exactly `fileTree.dir` as provider with explicit task dependency
     // Because of the following bugs:
     // * https://github.com/gradle/gradle/issues/27881 ConfigurableFileTree.from() doesn't preserve Task Dependencies
     // * https://github.com/gradle/gradle/issues/27882 SourceDirectorySet doesn't accept ConfigurableFileTree
-    project.filesProvider(fileTree) { fileTree.dir }
+    return project.filesProvider(fileTree) { fileTree.dir }
 }
