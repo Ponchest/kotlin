@@ -13,6 +13,6 @@ expect class InConstructor(@Ann arg: String)
 // FILE: jvm.kt
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun inMethod(arg: String) {}<!>
 
-actual class InConstructor <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual constructor(arg: String)<!> {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class InConstructor actual constructor(arg: String) {}<!>
 
 actual fun <!ACTUAL_WITHOUT_EXPECT!>withIncopatibility<!>(p1: String) {}
