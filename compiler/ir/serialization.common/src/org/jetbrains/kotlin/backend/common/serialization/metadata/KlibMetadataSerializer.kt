@@ -114,8 +114,9 @@ abstract class KlibMetadataSerializer(
     private fun Sequence<DeclarationDescriptor>.filterPrivate(): Sequence<DeclarationDescriptor> =
         if (produceHeaderKlib) {
             this.filter {
-                val isPrivate = it is DeclarationDescriptorWithVisibility && DescriptorVisibilities.isPrivate(it.visibility)
-                it is ClassDescriptor && it.kind.isInterface || !isPrivate
+                val isPublicOrInternal = it is DeclarationDescriptorWithVisibility
+                        && (it.visibility.isPublicAPI || it.visibility.delegate == Visibilities.Internal)
+                it is ClassDescriptor && it.kind.isInterface || isPublicOrInternal
             }
         } else this
 

@@ -58,6 +58,8 @@ fun FirMemberDeclaration.isNotExpectOrShouldBeSerialized(actualizedExpectDeclara
 
 fun FirMemberDeclaration.isNotPrivateOrShouldBeSerialized(produceHeaderKlib: Boolean): Boolean {
     return !produceHeaderKlib || visibility.isPublicAPI || visibility == Visibilities.Internal
-            // Always keep private interfaces and type aliases as they can be part of public type hierarchies.
+            // Always keep private interfaces as they can be part of public type hierarchies.
+            // We also keep private type aliases as they leak into public signatures (KT-17229).
+            // TODO: stop preserving private type aliases once KT-17229 is fixed.
             || (this as? FirClass)?.isInterface == true || this is FirTypeAlias
 }
