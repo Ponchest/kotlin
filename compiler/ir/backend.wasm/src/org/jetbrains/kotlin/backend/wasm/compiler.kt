@@ -261,15 +261,16 @@ fun WasmCompiledModuleFragment.generateAsyncJsWrapper(
     //language=js
     return """
 export async function instantiate(imports={}, runInitializer=true) {
-    const externrefBoxes = new WeakMap();
-    // ref must be non-null
-    function tryGetOrSetExternrefBox(ref, ifNotCached) {
-        if (typeof ref !== 'object') return ifNotCached;
-        const cachedBox = externrefBoxes.get(ref);
-        if (cachedBox !== void 0) return cachedBox;
-        externrefBoxes.set(ref, ifNotCached);
+    const cachedJsObjects = new WeakMap();
+    function getCachedJsObject(ref, ifNotCached) {
+        if (ref === null) return ifNotCached;
+        if (typeof ref !== 'object' && typeof ref !== 'function') return ifNotCached;
+        const cached = cachedJsObjects.get(ref);
+        if (cached !== void 0) return cached;
+        cachedJsObjects.set(ref, ifNotCached);
         return ifNotCached;
     }
+    const tryGetOrSetExternrefBox = getCachedJsObject; //Remove after bootstrap (KT-65322)
 
 $referencesToQualifiedAndImportedDeclarations
     

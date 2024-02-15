@@ -32,6 +32,12 @@ public class FirWasmJsCodegenInteropTestGenerated extends AbstractFirWasmJsCodeg
     }
 
     @Test
+    @TestMetadata("closureAdapterCaching.kt")
+    public void testClosureAdapterCaching() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/closureAdapterCaching.kt");
+    }
+
+    @Test
     @TestMetadata("defaultValues.kt")
     public void testDefaultValues() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/defaultValues.kt");

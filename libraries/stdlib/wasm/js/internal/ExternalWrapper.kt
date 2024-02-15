@@ -136,10 +136,13 @@ private fun doubleToExternref(x: Double): JsNumber =
 private fun externrefEquals(lhs: ExternalInterfaceType, rhs: ExternalInterfaceType): Boolean =
     js("lhs === rhs")
 
-private external fun tryGetOrSetExternrefBox(
+
+@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE", "UNCHECKED_CAST")
+//TODO Remove after bootstrap (KT-65322)
+private fun tryGetOrSetExternrefBox(
     ref: ExternalInterfaceType,
     ifNotCached: JsReference<JsExternalBox>
-): JsReference<JsExternalBox>?
+): JsReference<JsExternalBox>? = getCachedJsObject(ref, ifNotCached) as? JsReference<JsExternalBox>
 
 @WasmNoOpCast
 @Suppress("unused")
@@ -170,7 +173,7 @@ internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
     // If we have Null in notNullRef -- return null
     // If we already have a box -- return it,
     // otherwise -- remember new box and return it.
-    return tryGetOrSetExternrefBox(ref, JsExternalBox(ref).toJsReference())
+    return getCachedJsObject(ref, JsExternalBox(ref).toJsReference())
 }
 
 
