@@ -8148,6 +8148,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
         }
 
         @Test
+        @TestMetadata("kt65555.kt")
+        public void testKt65555() throws Exception {
+            runTest("compiler/testData/codegen/box/collections/kt65555.kt");
+        }
+
+        @Test
         @TestMetadata("mutableList.kt")
         public void testMutableList() throws Exception {
             runTest("compiler/testData/codegen/box/collections/mutableList.kt");
