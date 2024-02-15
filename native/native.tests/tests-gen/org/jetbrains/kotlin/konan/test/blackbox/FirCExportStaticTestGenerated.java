@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.konan.test.blackbox;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty;
+import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty;
 import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -20,9 +22,10 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/CExport")
 @TestDataPath("$PROJECT_ROOT")
+@EnforcedProperty(property = ClassLevelProperty.BINARY_LIBRARY_KIND, propertyValue = "STATIC")
 @Tag("frontend-fir")
 @FirPipeline()
-public class FirCExportTestDynamicGenerated extends AbstractNativeCExportDynamicTest {
+public class FirCExportStaticTestGenerated extends AbstractNativeCExportTest {
     @Test
     public void testAllFilesPresentInCExport() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/CExport"), Pattern.compile("^([^_](.+))$"), null, false);
