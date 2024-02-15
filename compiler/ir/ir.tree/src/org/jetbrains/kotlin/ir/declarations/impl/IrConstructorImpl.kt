@@ -26,7 +26,7 @@ class IrConstructorImpl @IrImplementationDetail constructor(
     override val symbol: IrConstructorSymbol,
     override var name: Name,
     override var visibility: DescriptorVisibility,
-    returnType: IrType,
+    override var returnType: IrType,
     override var isInline: Boolean,
     override var isExternal: Boolean,
     override var isPrimary: Boolean,
@@ -40,13 +40,6 @@ class IrConstructorImpl @IrImplementationDetail constructor(
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()
-
-    override var returnType: IrType = returnType
-        get() = if (field === IrUninitializedType) {
-            throw ReturnTypeIsNotInitializedException(this)
-        } else {
-            field
-        }
 
     override var typeParameters: List<IrTypeParameter> = emptyList()
 
