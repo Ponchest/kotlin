@@ -26062,6 +26062,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/javaInterop/genericSamSmartcast.kt");
         }
 
+        @TestMetadata("immutableName.kt")
+        public void testImmutableName() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/immutableName.kt");
+        }
+
         @TestMetadata("inheritanceWithWildcard.kt")
         public void testInheritanceWithWildcard() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/inheritanceWithWildcard.kt");
@@ -41323,6 +41328,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("explicitSuperCall.kt")
         public void testExplicitSuperCall() throws Exception {
             runTest("compiler/testData/codegen/box/specialBuiltins/explicitSuperCall.kt");
+        }
+
+        @TestMetadata("intersectionWithMappedSignature.kt")
+        public void testIntersectionWithMappedSignature() throws Exception {
+            runTest("compiler/testData/codegen/box/specialBuiltins/intersectionWithMappedSignature.kt");
         }
 
         @TestMetadata("irrelevantRemoveAndJavaList.kt")

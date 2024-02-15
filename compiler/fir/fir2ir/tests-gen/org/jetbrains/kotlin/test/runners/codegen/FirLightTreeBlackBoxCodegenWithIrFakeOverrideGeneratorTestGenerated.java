@@ -30814,6 +30814,12 @@ public class FirLightTreeBlackBoxCodegenWithIrFakeOverrideGeneratorTestGenerated
         }
 
         @Test
+        @TestMetadata("immutableName.kt")
+        public void testImmutableName() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/immutableName.kt");
+        }
+
+        @Test
         @TestMetadata("inheritanceWithWildcard.kt")
         public void testInheritanceWithWildcard() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/inheritanceWithWildcard.kt");
@@ -51991,6 +51997,12 @@ public class FirLightTreeBlackBoxCodegenWithIrFakeOverrideGeneratorTestGenerated
         @TestMetadata("explicitSuperCall.kt")
         public void testExplicitSuperCall() throws Exception {
             runTest("compiler/testData/codegen/box/specialBuiltins/explicitSuperCall.kt");
+        }
+
+        @Test
+        @TestMetadata("intersectionWithMappedSignature.kt")
+        public void testIntersectionWithMappedSignature() throws Exception {
+            runTest("compiler/testData/codegen/box/specialBuiltins/intersectionWithMappedSignature.kt");
         }
 
         @Test
