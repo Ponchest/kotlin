@@ -50,6 +50,7 @@ class K2MultiplatformStructureTest {
                 Fragment("c", project.files())
             )
         )
+        structure.defaultFragmentName.set("a")
 
         val sourceArguments = K2JVMCompilerArguments()
         sourceArguments.configureK2Multiplatform(structure)
