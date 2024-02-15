@@ -337,6 +337,12 @@ public class SymbolLightClassesParentingByFqNameForSourceTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("UnitAsTypeAlias.kt")
+    public void testUnitAsTypeAlias() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/UnitAsTypeAlias.kt");
+    }
+
+    @Test
     @TestMetadata("ValueClassInParametersWithJvmName.kt")
     public void testValueClassInParametersWithJvmName() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ValueClassInParametersWithJvmName.kt");
@@ -523,6 +529,12 @@ public class SymbolLightClassesParentingByFqNameForSourceTestGenerated extends A
         @TestMetadata("typeAliasActualization2.kt")
         public void testTypeAliasActualization2() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/typeAliasActualization2.kt");
+        }
+
+        @Test
+        @TestMetadata("UnitAsTypeAliasActualization.kt")
+        public void testUnitAsTypeAliasActualization() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/UnitAsTypeAliasActualization.kt");
         }
 
         @Test

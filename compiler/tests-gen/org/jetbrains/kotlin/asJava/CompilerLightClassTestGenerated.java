@@ -289,6 +289,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/TypePararametersInClass.kt");
     }
 
+    @TestMetadata("UnitAsTypeAlias.kt")
+    public void testUnitAsTypeAlias() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/UnitAsTypeAlias.kt");
+    }
+
     @TestMetadata("ValueClassInParametersWithJvmName.kt")
     public void testValueClassInParametersWithJvmName() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ValueClassInParametersWithJvmName.kt");
@@ -449,6 +454,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         @TestMetadata("typeAliasActualization2.kt")
         public void testTypeAliasActualization2() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/typeAliasActualization2.kt");
+        }
+
+        @TestMetadata("UnitAsTypeAliasActualization.kt")
+        public void testUnitAsTypeAliasActualization() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/UnitAsTypeAliasActualization.kt");
         }
 
         @TestMetadata("unresolvedQuialifierInAnnotation.kt")

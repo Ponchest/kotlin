@@ -337,6 +337,12 @@ public class SymbolLightClassesByFqNameForLibraryTestGenerated extends AbstractS
     }
 
     @Test
+    @TestMetadata("UnitAsTypeAlias.kt")
+    public void testUnitAsTypeAlias() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/UnitAsTypeAlias.kt");
+    }
+
+    @Test
     @TestMetadata("ValueClassInParametersWithJvmName.kt")
     public void testValueClassInParametersWithJvmName() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/ValueClassInParametersWithJvmName.kt");
