@@ -5,15 +5,17 @@
 
 package org.jetbrains.kotlin.ir.generator
 
+import org.jetbrains.kotlin.generators.tree.Model
 import org.jetbrains.kotlin.ir.generator.config.AbstractIrTreeImplementationConfigurator
+import org.jetbrains.kotlin.ir.generator.model.Element
 
 object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
-    override fun configure(): Unit = with(IrTree) {
+    override fun configure(model: Model<Element>): Unit = with(IrTree) {
         impl(simpleFunction)
         impl(property)
     }
 
-    override fun configureAllImplementations() {
+    override fun configureAllImplementations(model: Model<Element>) {
         // Use configureFieldInAllImplementations to customize certain fields in all implementation classes
     }
 }

@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeImplementationConfigurator
+import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.generators.tree.ImplementationKind.Object
 import org.jetbrains.kotlin.generators.tree.ImplementationKind.OpenClass
+import org.jetbrains.kotlin.generators.tree.Model
 
 object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() {
 
-    override fun configure() = with(FirTreeBuilder) {
+    override fun configure(model: Model<Element>) = with(FirTreeBuilder) {
         impl(constructor) {
             defaultFalse("isPrimary", withGetter = true)
         }
@@ -627,7 +629,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
     }
 
-    override fun configureAllImplementations() {
+    override fun configureAllImplementations(model: Model<Element>) {
         configureFieldInAllImplementations(
             field = "controlFlowGraphReference",
             implementationPredicate = { it.typeName != "FirAnonymousFunctionImpl" }
