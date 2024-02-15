@@ -52,6 +52,9 @@ abstract class K2MultiplatformStructure {
      * @see KotlinCompileTool.source
      */
     @get:Input
+    // this is an extra protection measure for cases when some task extends a compile task but doesn't need K2 Structure
+    // for example [KotlinJsIrLink]
+    @get:Optional
     abstract val defaultFragmentName: Property<String>
 }
 
@@ -75,8 +78,10 @@ internal fun K2MultiplatformStructure.fragmentSourcesCompilerArgs(
     }.toMutableList()
 
     val sourcesWithUnknownFragment = allSources - sourcesWithKnownFragment
-    val defaultFragmentName = defaultFragmentName.get()
-    sourcesWithUnknownFragment.mapTo(fragmentSourcesCompilerArgs) { fragmentSourceCompilerArg(it, defaultFragmentName) }
+    val defaultFragmentName = defaultFragmentName.orNull
+    if (defaultFragmentName != null) {
+        sourcesWithUnknownFragment.mapTo(fragmentSourcesCompilerArgs) { fragmentSourceCompilerArg(it, defaultFragmentName) }
+    }
 
     return fragmentSourcesCompilerArgs.toTypedArray()
 }
