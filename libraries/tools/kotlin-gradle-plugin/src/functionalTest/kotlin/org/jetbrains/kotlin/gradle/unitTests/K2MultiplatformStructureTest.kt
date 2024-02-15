@@ -128,7 +128,8 @@ class K2MultiplatformStructureTest {
             val args = compileTask.buildCompilerArguments()
 
             target.name to args.fragmentSources?.toList().orEmpty().map {
-                val (fragment, filePath) = it.split(":")
+                val fragment = it.substringBefore(":")
+                val filePath = it.substringAfter(":")
                 "$fragment:${File(filePath).name}"
             }
         }
