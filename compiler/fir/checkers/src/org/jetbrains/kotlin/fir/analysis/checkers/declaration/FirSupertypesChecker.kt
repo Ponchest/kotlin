@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -97,8 +98,18 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
             checkClassCannotBeExtendedDirectly(symbol, reporter, superTypeRef, context)
             checkNamedFunctionTypeParameter(superTypeRef, context, reporter)
 
-            if (!checkProjectionInImmediateArgumentToSupertype(coneType, superTypeRef, reporter, context)) {
-                checkSupertypeOnTypeAliasWithTypeProjection(coneType, fullyExpandedType, superTypeRef, reporter, context)
+            val isProjectionInImmediateArgumentReported = if (coneType.typeArguments.isNotEmpty()) {
+                checkProjectionInImmediateArgumentToSupertype(coneType, superTypeRef, reporter, context)
+            } else {
+                checkExpandedTypeCannotBeInherited(symbol, fullyExpandedType, reporter, superTypeRef, coneType, context)
+                false
+            }
+
+            if (!isProjectionInImmediateArgumentReported &&
+                coneType.toSymbol(context.session) is FirTypeAliasSymbol &&
+                fullyExpandedType.typeArguments.any { it.isConflictingOrNotInvariant }
+            ) {
+                reporter.reportOn(superTypeRef.source, FirErrors.CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION, context)
             }
         }
 
@@ -155,17 +166,21 @@ object FirSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
         return result
     }
 
-    private fun checkSupertypeOnTypeAliasWithTypeProjection(
-        coneType: ConeKotlinType,
+    private fun checkExpandedTypeCannotBeInherited(
+        symbol: FirBasedSymbol<*>?,
         fullyExpandedType: ConeKotlinType,
-        superTypeRef: FirTypeRef,
         reporter: DiagnosticReporter,
+        superTypeRef: FirTypeRef,
+        coneType: ConeKotlinType,
         context: CheckerContext,
     ) {
-        if (coneType.toSymbol(context.session) is FirTypeAliasSymbol &&
-            fullyExpandedType.typeArguments.any { it.isConflictingOrNotInvariant }
-        ) {
-            reporter.reportOn(superTypeRef.source, FirErrors.CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION, context)
+        if (symbol is FirRegularClassSymbol && symbol.classKind == ClassKind.INTERFACE) {
+            for (typeArgument in fullyExpandedType.typeArguments) {
+                if (typeArgument.isConflictingOrNotInvariant) {
+                    reporter.reportOn(superTypeRef.source, FirErrors.EXPANDED_TYPE_CANNOT_BE_INHERITED, coneType, context)
+                    break
+                }
+            }
         }
     }
 
