@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.CompileKotlinJsIrLinkMetric
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
+import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryNext
 import javax.inject.Inject
@@ -43,6 +44,9 @@ abstract class KotlinJsIrLink @Inject constructor(
 
     @get:Internal
     override val sources: FileCollection = super.sources
+
+    @get:Internal // K2MultiplatformStructure is not required for JS IR Link
+    override val multiplatformStructure: K2MultiplatformStructure get() = super.multiplatformStructure
 
     override fun skipCondition(): Boolean {
         return !entryModule.get().asFile.exists()
