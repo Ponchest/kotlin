@@ -2415,7 +2415,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             CONSTRUCTOR_OR_SUPERTYPE_ON_TYPEALIAS_WITH_TYPE_PROJECTION,
-            "Constructor or supertype on type alias with type projection in expanded type is prohibited. " +
+            "Type alias with type projection ('in', 'out' or '*') in expanded type in constructor call or supertype position. " +
             "See https://youtrack.jetbrains.com/issue/KT-60305."
         )
 
