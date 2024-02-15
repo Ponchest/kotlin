@@ -85,14 +85,15 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Implementa
             }
             print(implementation.allParents.joinToString { "${it.render()}${it.kind.braces()}" })
             printBlock {
-                if (isInterface || isAbstract) {
-                    implementation.allFields.forEach {
-                        fieldPrinter.printField(it, override = true, modality = Modality.ABSTRACT.takeIf { isAbstract })
-                    }
-                } else {
-                    implementation.fieldsWithDefault.forEach {
-                        fieldPrinter.printField(it, override = true)
-                    }
+                val fields = if (isInterface || isAbstract) implementation.allFields
+                else implementation.fieldsWithDefault.filter { it.defaultValueInBase == null }
+                fields.forEachIndexed { index, field ->
+                    fieldPrinter.printField(
+                        field,
+                        inImplementation = true,
+                        override = true,
+                        modality = Modality.ABSTRACT.takeIf { isAbstract }
+                    )
                 }
 
                 printAdditionalMethods(implementation)

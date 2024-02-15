@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.printer.printBlock
-import org.jetbrains.kotlin.generators.tree.printer.printKDoc
 import org.jetbrains.kotlin.generators.tree.printer.printPropertyDeclaration
+import org.jetbrains.kotlin.generators.tree.printer.printKDoc
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
@@ -31,12 +31,13 @@ abstract class AbstractFieldPrinter<Field : AbstractField<*>>(
     context(ImportCollector)
     fun printField(
         field: Field,
+        inImplementation: Boolean,
         override: Boolean,
         inConstructor: Boolean = false,
         modality: Modality? = null,
     ) {
         printer.run {
-            val defaultValue = field.defaultValueInImplementation
+            val defaultValue = if (inImplementation) field.defaultValueInImplementation else field.defaultValueInBase
             printPropertyDeclaration(
                 name = field.name,
                 type = actualTypeOfField(field),
@@ -45,12 +46,12 @@ abstract class AbstractFieldPrinter<Field : AbstractField<*>>(
                 visibility = field.visibility,
                 modality = modality,
                 override = override,
-                isLateinit = field.isLateinit,
-                isVolatile = field.isVolatile,
+                isLateinit = (inImplementation || field.isFinal) && field.isLateinit,
+                isVolatile = (inImplementation || field.isFinal) && field.isVolatile,
                 optInAnnotation = field.optInAnnotation,
                 printOptInWrapped = defaultValue != null,
                 deprecation = field.deprecation,
-                kDoc = field.kDoc,
+                kDoc = field.kDoc.takeIf { printKDoc },
                 initializer = defaultValue.takeUnless { field.withGetter }
             )
             println()
