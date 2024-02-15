@@ -84,7 +84,7 @@ Before you begin, it is recommended to read the root `README.md` file and ensure
 
 ### Install locally
 
-Run `./gradlew dist install` to get a fresh version of the Kotlin compiler and the `js-plain-objects` plugin in your Maven local directory with `2.x.255-SNAPSHOT` versions.
+Run `./gradlew dist install` to get a fresh version of the Kotlin compiler and the `js-plain-objects` plugin in your Maven local directory with the latest `2.x.255-SNAPSHOT` versions.
 
 ### Work with tests
 
