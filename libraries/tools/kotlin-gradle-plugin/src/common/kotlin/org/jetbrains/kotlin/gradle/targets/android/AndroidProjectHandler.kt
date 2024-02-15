@@ -229,11 +229,13 @@ internal class AndroidProjectHandler(
         }
 
         val javaTask = variantData.javaCompileProvider
-
-        variantData.forEachJavaSourceDir { sources ->
-            compilation.defaultSourceSet.kotlin.srcDir(project.fileCollectionFromConfigurableFileTree(sources))
-        }
         @Suppress("UNCHECKED_CAST") val kotlinTask = compilation.compileTaskProvider as TaskProvider<KotlinCompile>
+        kotlinTask.configure { task ->
+            variantData.forEachJavaSourceDir { sources ->
+                task.source(sources.dir)
+                task.dependsOn(sources)
+            }
+        }
         wireKotlinTasks(project, compilation, androidPlugin, androidExt, variantData, javaTask, kotlinTask)
     }
 
