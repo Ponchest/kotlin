@@ -25,10 +25,6 @@ abstract class AbstractJavaModulesIntegrationTest(
     override val testDataPath: String
         get() = "compiler/testData/javaModules/"
 
-    protected open fun muteForK2(test: () -> Unit) {
-        test()
-    }
-
     private fun module(
         name: String,
         modulePath: List<File> = emptyList(),
@@ -123,8 +119,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         module("moduleB", listOf(a))
     }
 
-    // TODO (KT-60797): missing JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE.
-    fun testSimpleUseNonExportedPackage() = muteForK2 {
+    fun testSimpleUseNonExportedPackage() {
         val a = module("moduleA")
         module("moduleB", listOf(a))
     }
@@ -136,8 +131,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         module("moduleD", listOf(a, b, c))
     }
 
-    // TODO (KT-60797): missing JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE.
-    fun testUnnamedDependsOnNamed() = muteForK2 {
+    fun testUnnamedDependsOnNamed() {
         val a = module("moduleA")
         module("moduleB", listOf(a), listOf("moduleA"))
 
@@ -177,8 +171,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         }
     }
 
-    // TODO (KT-60797): missing JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE.
-    fun testAutomaticModuleInternalJdkPackageUsage() = muteForK2 {
+    fun testAutomaticModuleInternalJdkPackageUsage() {
         module("jvmStatUsage")
     }
 
@@ -220,8 +213,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         module("moduleD", listOf(c, b, a))
     }
 
-    // TODO (KT-60797): missing JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE.
-    fun testSpecifyPathToModuleInfoInArguments() = muteForK2 {
+    fun testSpecifyPathToModuleInfoInArguments() {
         val a = module("moduleA")
 
         val kotlinOptions = mutableListOf(
@@ -352,15 +344,13 @@ abstract class AbstractJavaModulesIntegrationTest(
         })
     }
 
-    // TODO (KT-60797): missing JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE.
-    fun testNoDependencyOnNamed() = muteForK2 {
+    fun testNoDependencyOnNamed() {
         // This is a test on the JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE diagnostic.
         val lib = module("lib")
         module("main", listOf(lib), listOf("lib"))
     }
 
-    // TODO (KT-60797): missing JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE.
-    fun testNoDependencyOnUnnamed() = muteForK2 {
+    fun testNoDependencyOnUnnamed() {
         // This is a test on the JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE diagnostic.
         // Most of the other tests in this class are compiling modules to jars, however here we need to compile the module to a directory.
         // The reason is twofold:
