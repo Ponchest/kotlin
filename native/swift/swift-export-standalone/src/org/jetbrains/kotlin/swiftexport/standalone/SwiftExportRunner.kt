@@ -24,7 +24,11 @@ public fun main(args: Array<String>) {
             sourceRoot = Paths.get(System.getenv("SWIFT_EXPORT_INPUT_SOURCE_ROOT_PATH")),
             libraries = emptyList(),
         ),
-        config = SwiftExportConfig(emptyMap(), createDummyLogger()),
+        config = SwiftExportConfig(
+            emptyMap(),
+            createDummyLogger(),
+            Distribution(System.getenv("KONAN_HOME"))
+        ),
         output = SwiftExportOutput(
             swiftApi = Paths.get(System.getenv("SWIFT_EXPORT_OUTPUT_SWIFT_API_PATH")),
             kotlinBridges = Paths.get(System.getenv("SWIFT_EXPORT_OUTPUT_KOTLIN_BRIDGE_PATH")),
