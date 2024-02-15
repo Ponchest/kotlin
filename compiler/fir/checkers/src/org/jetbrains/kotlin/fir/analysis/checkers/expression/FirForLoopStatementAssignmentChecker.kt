@@ -18,12 +18,13 @@ import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 
 object FirForLoopStatementAssignmentChecker : FirLoopExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirLoop, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (expression.source?.kind != KtFakeSourceElementKind.DesugaredForLoop) return
+        val parent = if (context.containingElements.size >= 2) context.containingElements[context.containingElements.size - 2] else return
+        if (parent.source?.kind != KtFakeSourceElementKind.DesugaredForLoop) return
 
-        val parent = if (context.containingElements.size >= 3) context.containingElements[context.containingElements.size - 3] else return
-        if (parent is FirBlock
-            || (parent is FirReturnExpression && parent.source?.kind == KtFakeSourceElementKind.ImplicitReturn.FromLastStatement)
-            || (parent is FirProperty && parent.source?.kind == KtFakeSourceElementKind.DesugaredForLoop))
+        val grandParent = if (context.containingElements.size >= 3) context.containingElements[context.containingElements.size - 3] else return
+        if (grandParent is FirBlock
+            || (grandParent is FirReturnExpression && grandParent.source?.kind == KtFakeSourceElementKind.ImplicitReturn.FromLastStatement)
+            || (grandParent is FirProperty && grandParent.source?.kind == KtFakeSourceElementKind.DesugaredForLoop))
             return
 
         reporter.reportOn(expression.source, FirErrors.EXPRESSION_EXPECTED, context)
