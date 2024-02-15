@@ -546,6 +546,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = CyclicInheritanceHierarchy::class
     }
 
+    interface ExpandedTypeCannotBeInherited : KtFirDiagnostic<KtTypeReference> {
+        override val diagnosticClass get() = ExpandedTypeCannotBeInherited::class
+        val type: KtType
+    }
+
     interface ProjectionInImmediateArgumentToSupertype : KtFirDiagnostic<KtModifierListOwner> {
         override val diagnosticClass get() = ProjectionInImmediateArgumentToSupertype::class
     }

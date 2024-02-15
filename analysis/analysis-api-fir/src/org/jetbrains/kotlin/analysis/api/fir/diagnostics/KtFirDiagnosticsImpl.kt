@@ -643,6 +643,12 @@ internal class CyclicInheritanceHierarchyImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.CyclicInheritanceHierarchy
 
+internal class ExpandedTypeCannotBeInheritedImpl(
+    override val type: KtType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtTypeReference>(firDiagnostic, token), KtFirDiagnostic.ExpandedTypeCannotBeInherited
+
 internal class ProjectionInImmediateArgumentToSupertypeImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
