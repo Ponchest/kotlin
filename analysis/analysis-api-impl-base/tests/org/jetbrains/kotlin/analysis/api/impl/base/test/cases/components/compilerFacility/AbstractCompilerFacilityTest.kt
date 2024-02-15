@@ -51,9 +51,6 @@ import kotlin.test.assertFalse
 abstract class AbstractMultiModuleCompilerFacilityTest : AbstractCompilerFacilityTest()
 
 abstract class AbstractFirPluginPrototypeMultiBinaryModuleCompilerFacilityTest : AbstractCompilerFacilityTest() {
-    override fun extraConfigurators(): Array<Constructor<AbstractEnvironmentConfigurator>> =
-        arrayOf(::PluginAnnotationsProvider, ::ExtensionRegistrarConfigurator)
-
     override fun extraCustomRuntimeClasspathProviders(): Array<Constructor<RuntimeClasspathProvider>> =
         arrayOf(::PluginRuntimeAnnotationsProvider)
 }
@@ -117,15 +114,13 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    open fun extraConfigurators(): Array<Constructor<AbstractEnvironmentConfigurator>> = emptyArray()
-
     open fun extraCustomRuntimeClasspathProviders(): Array<Constructor<RuntimeClasspathProvider>> = emptyArray()
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {
             useDirectives(Directives)
-            useConfigurators(*(extraConfigurators() + ::CompilerFacilityEnvironmentConfigurator))
+            useConfigurators(::CompilerFacilityEnvironmentConfigurator)
             defaultDirectives {
                 +ConfigurationDirectives.WITH_STDLIB
                 +JvmEnvironmentConfigurationDirectives.FULL_JDK
