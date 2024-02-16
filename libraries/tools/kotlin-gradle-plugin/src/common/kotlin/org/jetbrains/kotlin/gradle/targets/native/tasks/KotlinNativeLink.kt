@@ -404,7 +404,7 @@ constructor(
                     NativeCacheOrchestration.Compiler -> {
                         if (cacheSettings.kind != NativeCacheKind.NONE
                             && !optimized
-                            && konanPropertiesService.get().cacheWorksFor(konanTarget)
+                            && konanPropertiesService.get().cacheWorksFor(kotlinNativeProvider.get().bundleDirectory.getFile(), konanTarget)
                         ) {
                             add("-Xauto-cache-from=${cacheSettings.gradleUserHomeDir}")
                             add("-Xbackend-threads=${cacheSettings.threads}")
@@ -428,7 +428,8 @@ constructor(
                             executionContext = executionContext,
                             settings = cacheBuilderSettings,
                             konanPropertiesService = konanPropertiesService.get(),
-                            metricsReporter = metricsReporter
+                            metricsReporter = metricsReporter,
+                            konanHome = kotlinNativeProvider.get().bundleDirectory.getFile()
                         )
                         addAll(cacheBuilder.buildCompilerArgs(resolvedConfiguration))
                     }
