@@ -405,7 +405,7 @@ open class JvmIrCodegenFactory(
             part.addTo(builder)
         }
 
-        backendContext.optionalAnnotations.forEach { metadata ->
+        for (metadata in backendContext.optionalAnnotations) {
             val serializer = backendContext.backendExtension.createModuleMetadataSerializer(backendContext)
             builder.addOptionalAnnotationClass(serializer.serialize(metadata, stringTable))
         }
