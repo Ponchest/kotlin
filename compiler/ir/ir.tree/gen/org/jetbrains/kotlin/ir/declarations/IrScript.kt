@@ -8,6 +8,8 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -25,6 +27,9 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  */
 abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarationParent, IrStatementContainer, IrMetadataSourceOwner {
     abstract override val symbol: IrScriptSymbol
+
+    @ObsoleteDescriptorBasedAPI
+    abstract override val descriptor: ScriptDescriptor
 
     abstract var thisReceiver: IrValueParameter?
 
