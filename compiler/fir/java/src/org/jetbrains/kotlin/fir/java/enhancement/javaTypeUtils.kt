@@ -60,7 +60,13 @@ private fun ConeKotlinType.enhanceConeKotlinType(
             when {
                 lowerResult == null && upperResult == null -> null
                 this is ConeRawType -> ConeRawType.create(lowerResult ?: lowerBound, upperResult ?: upperBound)
-                else -> coneFlexibleOrSimpleType(session.typeContext, lowerResult ?: lowerBound, upperResult ?: upperBound)
+                else -> coneFlexibleOrSimpleType(session.typeContext, lowerResult ?: lowerBound, upperResult ?: upperBound).let {
+                    if (it !is ConeFlexibleType) {
+                        it.withAttributes(it.attributes + CompilerConeAttributes.EnhancedNullability)
+                    } else {
+                        it
+                    }
+                }
             }
         }
         is ConeSimpleKotlinType -> enhanceInflexibleType(
