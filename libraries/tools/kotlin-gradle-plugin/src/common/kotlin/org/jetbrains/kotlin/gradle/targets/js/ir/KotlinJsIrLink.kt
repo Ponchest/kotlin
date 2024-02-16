@@ -14,6 +14,7 @@ import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ContributeCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -45,7 +46,11 @@ abstract class KotlinJsIrLink @Inject constructor(
     @get:Internal
     override val sources: FileCollection = super.sources
 
-    @get:Internal // K2MultiplatformStructure is not required for JS IR Link
+    /**
+     * [K2MultiplatformStructure] is not required for JS IR link
+     */
+    @InternalKotlinGradlePluginApi
+    @get:Internal
     override val multiplatformStructure: K2MultiplatformStructure get() = super.multiplatformStructure
 
     override fun skipCondition(): Boolean {
