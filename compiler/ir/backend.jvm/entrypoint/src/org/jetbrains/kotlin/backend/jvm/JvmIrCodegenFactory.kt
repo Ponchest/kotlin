@@ -393,11 +393,11 @@ open class JvmIrCodegenFactory(
                 stringTable.addQualifiedName(qualifiedName)
             }
             // Then add the annotations themselves, unless they are in dirty sources, i.e. contained in backendContext.optionalAnnotations
-            optionalAnnotations.filter { proto ->
+            for (proto in optionalAnnotations) {
                 val name = nameResolver.getQualifiedClassName(proto.fqName)
-                backendContext.optionalAnnotations.none { metadata -> metadata.name?.asString() == name }
-            }.forEach { proto ->
-                builder.addOptionalAnnotationClass(proto)
+                if (backendContext.optionalAnnotations.none { metadata -> metadata.name?.asString() == name }) {
+                    builder.addOptionalAnnotationClass(proto)
+                }
             }
         }
 
