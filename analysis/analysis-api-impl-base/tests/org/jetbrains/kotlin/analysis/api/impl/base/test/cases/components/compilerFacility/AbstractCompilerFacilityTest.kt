@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.plugin.services.PluginAnnotationsProvider
-import org.jetbrains.kotlin.fir.plugin.services.ExtensionRegistrarConfigurator
 import org.jetbrains.kotlin.fir.plugin.services.PluginRuntimeAnnotationsProvider
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
