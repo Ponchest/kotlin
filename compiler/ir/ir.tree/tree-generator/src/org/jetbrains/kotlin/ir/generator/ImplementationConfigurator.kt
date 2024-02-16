@@ -59,7 +59,23 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             defaultNull("backingField", "getter", "setter")
         }
         impl(propertyWithLateBinding) {
-            implementation.doPrint = false
+            defaultNull("backingField", "getter", "setter")
+            default("containerSource") {
+                value = "null"
+                withGetter = true
+            }
+            default("isBound") {
+                value = "_symbol != null"
+                withGetter = true
+            }
+            default("symbol") {
+                value = "_symbol ?: error(\"\$this has not acquired a symbol yet\")"
+                withGetter = true
+            }
+            default("descriptor") {
+                value = "_symbol?.descriptor ?: this.toIrBasedDescriptor()"
+                withGetter = true
+            }
         }
 
         impl(localDelegatedProperty) {
