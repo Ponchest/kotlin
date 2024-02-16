@@ -214,7 +214,7 @@ class IrFakeOverrideBuilder(
         return bound
     }
 
-    // Based on findMemberWithMaxVisibility from VisibilityUtil.kt.
+    // Based on selectMostSpecificMembers from FirOverrideService.kt
     private fun findMemberWithMaxVisibility(members: Collection<FakeOverride>): FakeOverride {
         assert(members.isNotEmpty())
 
@@ -225,14 +225,48 @@ class IrFakeOverrideBuilder(
                 continue
             }
 
-            val result = DescriptorVisibilities.compare(member.override.visibility, candidate.override.visibility)
-            if (result != null && result < 0) {
+            if (member < candidate) {
                 member = candidate
             }
         }
         return member ?: error("Could not find a visible member")
     }
 
+    // Based on compareTo from FirOverrideService.kt
+    private operator fun FakeOverride.compareTo(other: FakeOverride): Int = with(typeSystem) {
+        fun merge(preferA: Boolean, preferB: Boolean, previous: Int): Int = when {
+            preferA == preferB -> previous
+            preferA && previous >= 0 -> 1
+            preferB && previous <= 0 -> -1
+            else -> 0
+        }
+
+        val aIr = this@compareTo.override
+        val bIr = other.override
+        val byVisibility = DescriptorVisibilities.compare(aIr.visibility, bIr.visibility) ?: 0
+        val aReturnType = aIr.returnType
+        val bReturnType = bIr.returnType
+        val aSubtypesB = aReturnType.isSubtypeOf(bReturnType, typeSystem)
+        val bSubtypesA = bReturnType.isSubtypeOf(aReturnType, typeSystem)
+
+        val byVisibilityAndType = when {
+            // Could be that one of them is flexible, in which case the types are not equal but still subtypes of one another;
+            // make the inflexible one more specific.
+            aSubtypesB && bSubtypesA -> merge(!aReturnType.isFlexible(), !bReturnType.isFlexible(), byVisibility)
+            aSubtypesB && byVisibility >= 0 -> 1
+            bSubtypesA && byVisibility <= 0 -> -1
+            else -> 0
+        }
+
+        return when (aIr) {
+            is IrSimpleFunction -> byVisibilityAndType
+            is IrProperty -> {
+                require(bIr is IrProperty)
+                merge(aIr.isVar, bIr.isVar, byVisibilityAndType)
+            }
+            else -> error("Unexpected type: $aIr")
+        }
+    }
 
     private fun createAndBindFakeOverrides(
         current: IrClass,

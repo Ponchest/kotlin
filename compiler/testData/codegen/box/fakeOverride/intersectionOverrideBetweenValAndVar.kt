@@ -1,5 +1,6 @@
 // DUMP_IR
 // FIR_IDENTICAL
+// IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION: different order of overridden symbols for C.<get-x>
 
 abstract class A {
     abstract val x: String
