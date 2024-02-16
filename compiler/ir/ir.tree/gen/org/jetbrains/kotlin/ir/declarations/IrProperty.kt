@@ -25,6 +25,8 @@ abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration, 
 
     abstract override val symbol: IrPropertySymbol
 
+    abstract override var overriddenSymbols: List<IrPropertySymbol>
+
     abstract var isVar: Boolean
 
     abstract var isConst: Boolean
