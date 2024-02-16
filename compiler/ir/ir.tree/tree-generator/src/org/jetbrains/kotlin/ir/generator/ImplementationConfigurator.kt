@@ -46,7 +46,9 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(constructor) {
-            implementation.doPrint = false
+            defaultEmptyList("valueParameters")
+            defaultNull("dispatchReceiverParameter", "extensionReceiverParameter", "body")
+            default("contextReceiverParametersCount", "0")
         }
 
         impl(field) {
