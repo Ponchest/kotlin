@@ -107,12 +107,8 @@ abstract class AbstractNativeCExportTest(
             modules = setOf(module),
             freeCompilerArgs = TestCompilerArgs(listOf()),
             nominalPackageName = PackageName(moduleName),
-            checks = TestRunChecks(
-                executionTimeoutCheck = TestRunCheck.ExecutionTimeout.ShouldNotExceed(testRunSettings.get<Timeouts>().executionTimeout),
-                exitCodeCheck = TestRunCheck.ExitCode.Expected(0),
-                outputDataFile = goldenData?.let { TestRunCheck.OutputDataFile(file = it) },
-                outputMatcher = null,
-                fileCheckMatcher = null,
+            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).copy(
+                outputDataFile = goldenData?.let { TestRunCheck.OutputDataFile(file = it) }
             ),
             extras = TestCase.NoTestRunnerExtras(entryPoint = "main")
         ).apply {
