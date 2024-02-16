@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.generator
 
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.Model
 import org.jetbrains.kotlin.generators.tree.StandardTypes
 import org.jetbrains.kotlin.ir.generator.config.AbstractIrTreeImplementationConfigurator
@@ -103,7 +104,10 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(`class`) {
-            implementation.doPrint = false
+            kind = ImplementationKind.OpenClass
+            defaultNull("thisReceiver", "valueClassRepresentation")
+            defaultEmptyList("superTypes", "sealedSubclasses")
+            defaultFalse("isExternal", "isCompanion", "isInner", "isData", "isValue", "isExpect", "isFun", "hasEnumEntries")
         }
 
         impl(enumEntry) {
