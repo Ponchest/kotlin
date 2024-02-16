@@ -92,7 +92,14 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         }
 
         impl(variable) {
-            implementation.doPrint = false
+            implementation.putImplementationOptInInConstructor = false
+            implementation.constructorParameterOrderOverride =
+                listOf("startOffset", "endOffset", "origin", "symbol", "name", "type", "isVar", "isConst", "isLateinit")
+            defaultNull("initializer")
+            default("factory") {
+                value = "error(\"Create IrVariableImpl directly\")"
+                withGetter = true
+            }
         }
 
         impl(`class`) {
