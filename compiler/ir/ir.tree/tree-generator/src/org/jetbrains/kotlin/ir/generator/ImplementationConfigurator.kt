@@ -154,10 +154,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
         impl(file) {
             implementation.doPrint = false
         }
-
-        impl(typeAlias) {
-            implementation.doPrint = false
-        }
     }
 
     override fun configureAllImplementations(model: Model<Element>) {
