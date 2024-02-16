@@ -28,6 +28,9 @@ abstract class AbstractFieldPrinter<Field : AbstractField<*>>(
      */
     protected open fun actualTypeOfField(field: Field): TypeRefWithNullability = field.typeRef
 
+    protected open val printKDoc
+        get() = true
+
     context(ImportCollector)
     fun printField(
         field: Field,

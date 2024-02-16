@@ -11,7 +11,7 @@ package org.jetbrains.kotlin.generators.tree
 @Suppress("LeakingThis")
 abstract class AbstractImplementation<Implementation, Element, Field>(
     val element: Element,
-    val name: String?,
+    var name: String?,
 ) : FieldContainer<Field>, ImplementationKindOwner
         where Implementation : AbstractImplementation<Implementation, Element, Field>,
               Element : AbstractElement<Element, *, Implementation>,
@@ -71,6 +71,10 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
         get() = true
     var isPublic = false
 
+    var putImplementationOptInInConstructor = true
+
+    var constructorParameterOrderOverride: List<String>? = null
+
     override fun get(fieldName: String): Field? {
         return allFields.firstOrNull { it.name == fieldName }
     }
@@ -99,4 +103,7 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
         }
 
     var builder: LeafBuilder<Field, Element, Implementation>? = null
+
+    open val doPrint: Boolean
+        get() = true
 }

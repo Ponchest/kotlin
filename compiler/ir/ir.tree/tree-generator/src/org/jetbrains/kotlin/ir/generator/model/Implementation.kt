@@ -9,6 +9,13 @@ import org.jetbrains.kotlin.generators.tree.AbstractImplementation
 import org.jetbrains.kotlin.generators.tree.ImplementationKind
 
 class Implementation(element: Element, name: String?) : AbstractImplementation<Implementation, Element, Field>(element, name) {
-    override val allFields
-        get() = element.allFields
+    override val allFields: List<Field> = element.allFields.map { it.copy() }
+
+    override var kind: ImplementationKind? = ImplementationKind.FinalClass
+
+    override var doPrint = true
+
+    init {
+        isPublic = true
+    }
 }

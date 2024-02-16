@@ -118,7 +118,7 @@ fun <Element, Implementation, ElementField, ImplementationField> generateTree(
     }
 
     if (createImplementationPrinter != null) {
-        implementations.mapTo(generatedFiles) { implementation ->
+        implementations.filter { it.doPrint }.mapTo(generatedFiles) { implementation ->
             printGeneratedType(
                 generationPath,
                 treeGeneratorReadme,
