@@ -2703,6 +2703,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
     public void testFakeOverrideOfRawJavaCollection() {
       runTest("compiler/testData/ir/irText/fakeOverrides/fakeOverrideOfRawJavaCollection.kt");
     }
+
+    @Test
+    @TestMetadata("intersectionWithJava.kt")
+    public void testIntersectionWithJava() {
+      runTest("compiler/testData/ir/irText/fakeOverrides/intersectionWithJava.kt");
+    }
   }
 
   @Nested
