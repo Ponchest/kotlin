@@ -79,9 +79,7 @@ kotlin {
 }
 
 publishing {
-	repositories {
-        maven {
-            url = uri("$buildDir/repo")
-        }
-	}
+    repositories {
+        maven("$buildDir/repo")
+    }
 }

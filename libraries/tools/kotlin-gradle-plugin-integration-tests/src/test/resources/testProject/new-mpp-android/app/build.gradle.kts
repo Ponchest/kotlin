@@ -64,7 +64,6 @@ dependencies {
 tasks.register("printCompilerPluginOptions") {
     doFirst {
         kotlin.targets.flatMap { it.compilations }.forEach { compilation ->
-//            if (compilation is KotlinMetadataCompilation<*> && compilation.name == "main") return@forEach
             val sourceSetName = compilation.defaultSourceSet.name
             val compileTask = compilation.compileTaskProvider.get()
             val args: List<String>
