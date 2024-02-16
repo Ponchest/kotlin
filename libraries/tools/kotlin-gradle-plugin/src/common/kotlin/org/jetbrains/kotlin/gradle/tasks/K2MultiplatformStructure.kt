@@ -49,11 +49,13 @@ abstract class K2MultiplatformStructure {
     /**
      * If new sources were added to the Compile Task,
      * and they weren't mapped to any of the fragments then [defaultFragmentName] will be used
+     *
+     * It is marked with @Optional as an extra protection measure for cases when some task extends
+     * a compile task but doesn't need K2 Structure for example [KotlinJsIrLink]
+     *
      * @see KotlinCompileTool.source
      */
     @get:Input
-    // this is an extra protection measure for cases when some task extends a compile task but doesn't need K2 Structure
-    // for example [KotlinJsIrLink]
     @get:Optional
     abstract val defaultFragmentName: Property<String>
 }
