@@ -36,7 +36,7 @@ interface JvmBackendExtension {
         }
 
         override fun createModuleMetadataSerializer(context: JvmBackendContext) = object : ModuleMetadataSerializer {
-            override fun serialize(metadata: MetadataSource.Class, stringTable: StringTableImpl): ProtoBuf.Class {
+            override fun serializeOptionalAnnotationClass(metadata: MetadataSource.Class, stringTable: StringTableImpl): ProtoBuf.Class {
                 require(metadata is DescriptorMetadataSource.Class)
                 return DescriptorSerializer.createTopLevel(
                     JvmOptionalAnnotationSerializerExtension(stringTable), context.state.config.languageVersionSettings,
@@ -54,5 +54,5 @@ interface JvmBackendExtension {
 }
 
 interface ModuleMetadataSerializer {
-    fun serialize(metadata: MetadataSource.Class, stringTable: StringTableImpl): ProtoBuf.Class
+    fun serializeOptionalAnnotationClass(metadata: MetadataSource.Class, stringTable: StringTableImpl): ProtoBuf.Class
 }

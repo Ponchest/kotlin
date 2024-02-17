@@ -49,7 +49,7 @@ class FirJvmBackendExtension(
     }
 
     override fun createModuleMetadataSerializer(context: JvmBackendContext) = object : ModuleMetadataSerializer {
-        override fun serialize(metadata: MetadataSource.Class, stringTable: StringTableImpl): ProtoBuf.Class {
+        override fun serializeOptionalAnnotationClass(metadata: MetadataSource.Class, stringTable: StringTableImpl): ProtoBuf.Class {
 
             require(metadata is FirMetadataSource.Class) { "Metadata is expected to be ${FirMetadataSource.Class::class.simpleName}" }
 
@@ -65,9 +65,7 @@ class FirJvmBackendExtension(
                 metadata,
                 // annotation can't have local delegated properties, it is safe to pass empty list
                 localDelegatedProperties = emptyList(),
-                context.isEnclosedInConstructor.toList(),
                 typeApproximator,
-                context.defaultTypeMapper,
                 components,
                 object : FirElementAwareStringTable {
                     override fun getQualifiedClassNameIndex(className: String, isLocal: Boolean): Int =

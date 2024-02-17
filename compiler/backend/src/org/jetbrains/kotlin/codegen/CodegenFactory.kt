@@ -42,12 +42,9 @@ interface CodegenFactory {
 
     fun invokeCodegen(input: CodegenInput)
 
-    fun invokeModuleMetadataGeneration(result: CodegenInput)
-
     fun generateModule(state: GenerationState, input: BackendInput) {
         val result = invokeLowerings(state, input)
         invokeCodegen(result)
-        invokeModuleMetadataGeneration(result)
     }
 
     class IrConversionInput(
@@ -131,10 +128,10 @@ object DefaultCodegenFactory : CodegenFactory {
     }
 
     override fun invokeCodegen(input: CodegenFactory.CodegenInput) {
-        // Do nothing
+        generateModuleMetadata(input)
     }
 
-    override fun invokeModuleMetadataGeneration(result: CodegenFactory.CodegenInput) {
+    private fun generateModuleMetadata(result: CodegenFactory.CodegenInput) {
         val builder = JvmModuleProtoBuf.Module.newBuilder()
 
         val stringTable = StringTableImpl()

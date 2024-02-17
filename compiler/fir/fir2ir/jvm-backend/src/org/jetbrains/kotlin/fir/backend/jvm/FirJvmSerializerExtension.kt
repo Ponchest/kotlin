@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.serialization.JvmSignatureSerializer
@@ -33,7 +32,6 @@ import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.FirSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -66,7 +64,7 @@ open class FirJvmSerializerExtension(
     private val unifiedNullChecks: Boolean,
     override val metadataVersion: BinaryVersion,
     private val jvmDefaultMode: JvmDefaultMode,
-    override val stringTable: FirElementAwareStringTable,
+    final override val stringTable: FirElementAwareStringTable,
     override val constValueProvider: ConstValueProvider?,
     override val additionalMetadataProvider: FirAdditionalMetadataProvider?,
 ) : FirSerializerExtension() {
@@ -78,11 +76,9 @@ open class FirJvmSerializerExtension(
         state: GenerationState,
         metadata: MetadataSource?,
         localDelegatedProperties: List<FirProperty>,
-        localPoppedUpClasses: List<IrAttributeContainer>,
         approximator: AbstractTypeApproximator,
-        typeMapper: IrTypeMapper,
         components: Fir2IrComponents,
-        stringTable: FirElementAwareStringTable = FirJvmElementAwareStringTable(typeMapper, components, localPoppedUpClasses)
+        stringTable: FirElementAwareStringTable
     ) : this(
         session,
         bindings,

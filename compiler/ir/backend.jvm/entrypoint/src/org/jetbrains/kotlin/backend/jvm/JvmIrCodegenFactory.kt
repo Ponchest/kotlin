@@ -374,9 +374,11 @@ open class JvmIrCodegenFactory(
         // TODO: split classes into groups connected by inline calls; call this after every group
         //       and clear `JvmBackendContext.classCodegens`
         state.afterIndependentPart()
+
+        generateModuleMetadata(input)
     }
 
-    override fun invokeModuleMetadataGeneration(result: CodegenFactory.CodegenInput) {
+    private fun generateModuleMetadata(result: CodegenFactory.CodegenInput) {
         val backendContext = (result as JvmIrCodegenInput).context
         val builder = JvmModuleProtoBuf.Module.newBuilder()
         val stringTable = StringTableImpl()
@@ -407,7 +409,7 @@ open class JvmIrCodegenFactory(
 
         for (metadata in backendContext.optionalAnnotations) {
             val serializer = backendContext.backendExtension.createModuleMetadataSerializer(backendContext)
-            builder.addOptionalAnnotationClass(serializer.serialize(metadata, stringTable))
+            builder.addOptionalAnnotationClass(serializer.serializeOptionalAnnotationClass(metadata, stringTable))
         }
 
         val (stringTableProto, qualifiedNameTableProto) = stringTable.buildProto()
